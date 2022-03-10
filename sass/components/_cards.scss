@@ -1,0 +1,38 @@
+.card {
+    width: 380px;
+    height: 364px;
+
+    img {
+        object-fit: cover;
+        width:100%;
+        height:178px; 
+    }
+
+    .card-body{
+        background-color: #E7E7E7;
+
+        .card-title span:first-child{
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .card-icon-time{
+            display: block;
+            background-image: url('/public/assets/icon-time.png');
+            background-repeat: no-repeat;
+            width:20px;
+            height:20px;
+        }
+    
+        .card-description{
+            text-overflow: ellipsis;
+            white-space: normal;
+            overflow: hidden;
+            max-height: 90px;
+        }
+
+    }
+
+
+}

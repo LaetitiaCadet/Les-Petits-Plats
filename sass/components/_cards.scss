@@ -24,13 +24,24 @@
             width:20px;
             height:20px;
         }
+
+        .ingredients-list {
+            padding-left: 0;
+            
+            li {
+            font-size:10px;
+            list-style: none;
+            }
+        }
     
         .card-description{
             text-overflow: ellipsis;
             white-space: normal;
             overflow: hidden;
             max-height: 90px;
+            font-size: 12px;
         }
+
 
     }
 

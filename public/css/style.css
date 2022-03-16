@@ -11153,11 +11153,34 @@ p {
   width: 20px;
   height: 20px;
 }
+.card .card-body .ingredients-list {
+  padding-left: 0;
+}
+.card .card-body .ingredients-list li {
+  font-size: 10px;
+  list-style: none;
+}
 .card .card-body .card-description {
   text-overflow: ellipsis;
   white-space: normal;
   overflow: hidden;
   max-height: 90px;
+  font-size: 12px;
+}
+
+.suggestions {
+  display: block;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 30px;
+  border-bottom: 1px solid black;
+}
+
+.suggestions:hover {
+  background: darkgrey;
+  color: white;
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -1,6 +1,7 @@
 .card {
     width: 380px;
     height: 364px;
+    margin-right:52px;
 
     img {
         object-fit: cover;
@@ -27,7 +28,7 @@
 
         .ingredients-list {
             padding-left: 0;
-            
+
             li {
             font-size:10px;
             list-style: none;

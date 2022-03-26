@@ -12,7 +12,6 @@ async function getRecipes() {
 
 async function dataRecipe () {
     const data = await getRecipes();
-    // console.log(data) 
     const recipesData = data.recipes
     return recipesData
 }
@@ -33,16 +32,11 @@ function searchRecipe (data){
         if (searchInputValue.length < 2) {
             return
         }
-
         const foundRecipes = itemsRecipes.filter(item => item.name.toLowerCase().includes(searchInputValue.toLowerCase()));
-        // console.log(foundRecipes)
-        // const searchByIngredients = itemsRecipes.filter(item => item.ingredients[0].toLowerCase().includes(searchInputValue.toLowerCase()));
-        const searchByIngredients = itemsRecipes.filter(item => item.ingredients.toString().toLowerCase().includes(searchInputValue.toLowerCase()));
-        console.log(searchByIngredients)
 
-        const descriptionList = itemsRecipes.filter(item => item.description.toLowerCase().includes(searchInputValue.toLowerCase()));
-        // console.log(descriptionList)
-        let suggestions = ''; 
+        const foundIngredients = itemsRecipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(searchInputValue.toLowerCase())));
+
+        const foundDescription = itemsRecipes.filter(item => item.description.toLowerCase().includes(searchInputValue.toLowerCase()));
 
         if(searchInputValue != ""){
             recipesList.innerHTML = ""
@@ -51,29 +45,23 @@ function searchRecipe (data){
                 const recipesDOM = recipesModel.showRecipes(item)
                 recipesList.innerHTML += recipesDOM
             })
-            // descriptionList.forEach(item => {
-            //     const recipesModel = recipesFactory(item)
-            //     const recipesDOM = recipesModel.showRecipes(item)
-            //     recipesList.innerHTML += recipesDOM
-            // })
+            foundIngredients.forEach(item => {
+                const recipesModel = recipesFactory(item)
+                const recipesDOM = recipesModel.showRecipes(item)
+                recipesList.innerHTML += recipesDOM
+            })
+            foundDescription.forEach(item => {
+                const recipesModel = recipesFactory(item)
+                const recipesDOM = recipesModel.showRecipes(item)
+                recipesList.innerHTML += recipesDOM
+            })
         }
         
-        document.getElementById('search-suggestion').innerHTML = `${suggestions}` 
 
     }
 
-
 }
 
-// async function displaySearchRecipes(recipes){
-//     const recipeTag = document.getElementById('bloc-recipe')
-//         recipes.forEach((recipe) => {
-//          const recipesModel = recipesFactory(recipe)
-//          const recipesDOM = recipesModel.search(recipe)
-//          recipeTag.innerHTML += recipesDOM
-//      });
-
-// };
 
 async function displayRecipes(recipes){
     const recipeTag = document.getElementById('bloc-recipe')

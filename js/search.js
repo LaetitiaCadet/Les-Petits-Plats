@@ -28,16 +28,28 @@ function searchRecipe (data){
         itemsAppliance.push(items.appliance)
         itemsUstensils.push(items.ustensils)
     }
-    // recherche des recettes par nom, ingrédients et description avec la barre principale de la page. 
+
     const searchInput = document.querySelector('.input-search');
     const btnIngredient = document.getElementById('ingredients');
     const btnAppliance = document.getElementById('appliances');
     const btnUstensiles = document.getElementById('ustensils');
-    const ingredientsUl = document.querySelector('.ingredient-list');
-    const applianceUl = document.querySelector('.appliance-list');
-    const ustensilsUl = document.querySelector('.ustensil-list');
+    const ingredientsList = document.querySelector('.ingredient-list');
+    const applianceList = document.querySelector('.appliance-list');
+    const ustensilsList = document.querySelector('.ustensil-list');
     let recipesList = document.getElementById('bloc-recipe');
 
+    // j'affiche les resultat des filtre dans le dropdown des ingredients 
+    let arrayIngredient = []
+    ingredientsList.innerHTML = ""
+
+    itemsIngredients.forEach(items => arrayIngredient.push(items[0].ingredient))
+    let resultIngredients = Array.from(new Set(arrayIngredient))
+    resultIngredients.forEach(item => {
+        ingredientsList.innerHTML += `<li><a class="dropdown-item" href="#">`+ item +`</a></li> ` 
+
+    })
+
+        // recherche des recettes par nom, ingrédients et description avec la barre principale de la page. 
     searchInput.onkeyup = function (){
         const searchInputValue = searchInput.value;
 
@@ -57,46 +69,59 @@ function searchRecipe (data){
                 const recipesModel = recipesFactory(item)
                 const recipesDOM = recipesModel.showRecipes(item)
                 recipesList.innerHTML += recipesDOM
+
             })
             foundIngredients.forEach(item => {
                 const recipesModel = recipesFactory(item)
                 const recipesDOM = recipesModel.showRecipes(item)
                 recipesList.innerHTML += recipesDOM
+                console.log(item)
+
+                item.ingredients.forEach((ingredients) => {
+                    resultIngredients.forEach((items) => { 
+                        if (ingredients.ingredient == items) {
+                            console.log(items)
+                            ingredientsList.innerHTML = ""
+                            ingredientsList.innerHTML += `<li><a class="dropdown-item" href="#">${items}</a></li> ` 
+                        }
+                    })
+                })
             })
             foundDescription.forEach(item => {
                 const recipesModel = recipesFactory(item)
                 const recipesDOM = recipesModel.showRecipes(item)
                 recipesList.innerHTML += recipesDOM
             })
-        }       
+        }
+        
 
     }
 
-    btnIngredient.onclick = function (){
-            
-        let arrayIngredient = []
+    // btnIngredient.onclick = function (){
+ 
 
-        ingredientsUl.innerHTML = ""
+    //     ingredientsList.innerHTML = ""
 
-        itemsIngredients.forEach(items => arrayIngredient.push(items[0].ingredient))
-        console.log(arrayIngredient)
-        let resultIngredients = Array.from(new Set(arrayIngredient))
-        resultIngredients.forEach(item => {
-            ingredientsUl.innerHTML += `<li><a class="dropdown-item" href="#">`+ item +`</a></li> ` 
-        })
-        console.log(resultIngredients)
-    }
+    //     itemsIngredients.forEach(items => arrayIngredient.push(items[0].ingredient))
+    //     console.log(arrayIngredient)
+    //     let resultIngredients = Array.from(new Set(arrayIngredient))
+    //     resultIngredients.forEach(item => {
+    //         ingredientsList.innerHTML += `<li><a class="dropdown-item" href="#">`+ item +`</a></li> ` 
+    //     })
+    //     console.log(resultIngredients)
+
+    // }
 
     btnAppliance.onclick = function (){
         let arrayAppliance = []
 
-        applianceUl.innerHTML = ""
+        applianceList.innerHTML = ""
 
         itemsAppliance.forEach(items => arrayAppliance.push(items))
         console.log(arrayAppliance)
         let resultAppliance = new Set(arrayAppliance)
         resultAppliance.forEach(item => {
-            applianceUl.innerHTML += `<li><a class="dropdown-item" href="#">`+ item +`</a></li> ` 
+            applianceList.innerHTML += `<li><a class="dropdown-item" href="#">`+ item +`</a></li> ` 
         })
         console.log(resultAppliance)
     }
@@ -104,13 +129,13 @@ function searchRecipe (data){
     btnUstensiles.onclick = function (){
         let arrayUstensiles = []
 
-        ustensilsUl.innerHTML = ""
+        ustensilsList.innerHTML = ""
 
         itemsUstensils.forEach(items => items.map(newUstensil => arrayUstensiles.push(newUstensil.toLowerCase())).sort())
         console.log(arrayUstensiles)
         let resultUstensils = Array.from(new Set(arrayUstensiles))
         resultUstensils.forEach(item => {
-            ustensilsUl.innerHTML += `<li><a class="dropdown-item" href="#">`+ item +`</a></li> ` 
+            ustensilsList.innerHTML += `<li><a class="dropdown-item" href="#">`+ item +`</a></li> ` 
         })
         console.log(resultUstensils)
     }

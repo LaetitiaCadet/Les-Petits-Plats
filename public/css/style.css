@@ -11129,9 +11129,17 @@ p {
   font-size: 12px;
 }
 
+.delete-tag {
+  display: block;
+  background-image: url("./public/assets/icons/close-icon.png") no-repeat;
+  width: 20px;
+  height: 20px;
+}
+
 .card {
   width: 380px;
   height: 364px;
+  margin-right: 52px;
 }
 .card img {
   object-fit: cover;

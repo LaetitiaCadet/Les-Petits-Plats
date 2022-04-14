@@ -9,9 +9,15 @@ p{
     font-size:12px;
 }
 
-.delete-tag{
-    display: block;
-    background-image: url("./public/assets/icons/close-icon.png") no-repeat;
-    width: 20px;
-    height: 20px;
-} 
+.no-found {
+    font-size: 1.5em;
+    color: gray;
+
+}
+
+// .delete-tag::after{
+//     content:"";
+//     background-image: url("../../public/assets/icons/close-icon.png");
+//     width: 20px;
+//     height: 20px;
+// } 

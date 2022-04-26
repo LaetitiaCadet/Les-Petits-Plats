@@ -62,6 +62,60 @@ function searchRecipe(data) {
         
     })
 
+    let listIngredients = [],
+        listAppliance = [],
+        listUstensil = [];
+
+    itemsRecipes.forEach( recipe => {
+        listIngredients.push(recipe.ingredients.map(ingredient => ingredient.ingredient));
+        listAppliance.push(recipe.appliance);
+        listUstensil.push(recipe.ustensils);
+    })
+
+    let optionIngredient = listIngredients.join(',').split(','),
+        optionAppliance = listAppliance.join(',').split(','),
+        optionUstensil = listUstensil.join(',').split(',');
+
+        function filterOption (arrayFilter){
+            let foundItems = Array.from(new Set (arrayFilter));
+            foundItems.forEach(item => {
+                if (arrayFilter == optionIngredient) {
+                    ingredientsList.innerHTML += `<li><a class="dropdown-item" href="#">${item}</a></li> `
+                } else if (arrayFilter == optionAppliance){
+                    applianceList.innerHTML += `<li><a class="dropdown-item" href="#">${item}</a></li> `
+                } else if (arrayFilter == optionUstensil){
+                    ustensilsList.innerHTML += `<li><a class="dropdown-item" href="#">${item}</a></li> `
+                }
+                
+            })
+
+        }
+
+        let tagItem = function (items) {
+            const tagList = document.getElementById("tags");
+            const tags = document.querySelectorAll('.tag-item');
+            items.onclick = function (e) {
+                console.log(items)
+                e.preventDefault()
+                let item = e.target.textContent
+                console.log(e.target.textContent)
+                if (items == ingredientsList && item ){
+                    tagList.innerHTML += `<p class="tag-item btn btn-primary m-3">${item}</p>`
+                    e.target.style.display = "none"
+                } else if ( items == applianceList) {
+                    tagList.innerHTML += `<p class="tag-item btn btn-success m-3">${item}</p>`
+                    e.target.style.display = "none"
+                } else if (items == ustensilsList){
+                    tagList.innerHTML += `<p class="tag-item btn btn-danger m-3">${item}</p>`
+                    e.target.style.display = "none" 
+                }
+
+            }             
+        }
+        tagItem(ingredientsList)
+        tagItem(applianceList)
+        tagItem(ustensilsList)
+
     // recherche des recettes par nom, ingrédients et description avec la barre principale de la page.
     searchInput.onkeyup = function() {
         const searchInputValue = searchInput.value;
@@ -110,51 +164,18 @@ function searchRecipe(data) {
             remainingAppliance.push(recipe.appliance);
             remainingUstensil.push(recipe.ustensils)    
         })
+
         let filterOptionIngredient = remainingIngredients.join(',').split(',');  
         let filterOptionAppliance = remainingAppliance.join(',').split(',');
         let filterOptionUstensils = remainingUstensil.join(',').split(',');
 
-        function filterOption (arrayFilter){
-            let foundItems = Array.from(new Set (arrayFilter));
-            foundItems.forEach(item => {
-                if (arrayFilter == filterOptionIngredient) {
-                    ingredientsList.innerHTML += `<li><a class="dropdown-item" href="#">${item}</a></li> `
-                } else if (arrayFilter == filterOptionAppliance){
-                    applianceList.innerHTML += `<li><a class="dropdown-item" href="#">${item}</a></li> `
-                } else if (arrayFilter == filterOptionUstensils){
-                    ustensilsList.innerHTML += `<li><a class="dropdown-item" href="#">${item}</a></li> `
-                }
-                
-            })
-            let tagItem = function (items) {
-                const tagList = document.getElementById("tags");
-                const tags = document.querySelectorAll('.tag-item');
-                items.onclick = function (e) {
-                    console.log(items)
-                    e.preventDefault()
-                    let item = e.target.textContent
-                    console.log(e.target.textContent)
-                    if (items == ingredientsList && item ){
-                        tagList.innerHTML += `<p class="tag-item btn btn-primary m-3">${item}</p>`
-                        e.target.style.display = "none"
-                    } else if ( items == applianceList) {
-                        tagList.innerHTML += `<p class="tag-item btn btn-success m-3">${item}</p>`
-                        e.target.style.display = "none"
-                    } else if (items == ustensilsList){
-                        tagList.innerHTML += `<p class="tag-item btn btn-danger m-3">${item}</p>`
-                        e.target.style.display = "none" 
-                    }
-
-                }             
-            }
-            tagItem(ingredientsList)
-            tagItem(applianceList)
-            tagItem(ustensilsList)
-        }
-
         filterOption(filterOptionIngredient)
         filterOption(filterOptionAppliance)
         filterOption(filterOptionUstensils)
+
+        tagItem(ingredientsList)
+        tagItem(applianceList)
+        tagItem(ustensilsList)
 
     }
 

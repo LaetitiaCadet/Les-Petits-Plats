@@ -11174,19 +11174,10 @@ p {
   font-size: 12px;
 }
 
-.suggestions {
-  display: block;
-  margin: 0 auto;
-  padding: 20px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 30px;
-  border-bottom: 1px solid black;
-}
-
-.suggestions:hover {
-  background: darkgrey;
-  color: white;
+.btn-group ul.show {
+  width: 577px;
+  flex-flow: row wrap;
+  display: flex;
 }
 
 /*# sourceMappingURL=style.css.map */

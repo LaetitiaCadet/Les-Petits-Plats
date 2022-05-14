@@ -15,15 +15,47 @@ async function dataRecipe() {
     return recipesData
 }
 
+function displaySearchBarTag(){
+    let optionBtn = document.querySelectorAll(".dropdown-toggle")
+    let searchbarTag = document.createElement('input');
+    searchbarTag.setAttribute('type','text');
+    searchbarTag.classList.add('searchbarTag', 'btn', 'btn-primary', 'dropdown-toggle');
+
+    searchbarTag.onkeyup = function () {
+        let searchbarTagValue = searchbarTag.value ; 
+        console.log(value)
+
+        
+
+
+    }
+    optionBtn.forEach(btn => {
+        if(btn.style.display = "block"){
+            searchbarTag.style.display = "none"
+        }      
+        btn.onclick = function (e) {
+            console.log(e.currentTarget)
+            e.target.parentElement.appendChild(searchbarTag)
+            if (searchbarTag.style.display = "none") {
+                searchbarTag.style.display = "block"
+                searchbarTag.focus()
+                btn.style.display = "none"       
+            }
+        }
+    })
+}
+displaySearchBarTag()
+
 function displayIngredients(recipes) {
+
     let ingredients = [];
+
     recipes.forEach((recipe) => {
         recipe.ingredients.forEach((ingredient) => {
             ingredients.push(ingredient.ingredient);
         });
     })
     const filteredIngredients = Array.from(new Set(ingredients));
-
     const ingredientsList = document.querySelector('.ingredient-list');
     ingredientsList.innerHTML = ``;
     filteredIngredients.forEach(item => {
@@ -32,6 +64,9 @@ function displayIngredients(recipes) {
 }
 
 function displayAppliances(recipes) {
+    let searchbarTag = document.createElement('input');
+    searchbarTag.setAttribute('type','text');
+    searchbarTag.classList.add('show');
     let appliances = [];
     recipes.forEach(recipe => appliances.push(recipe.appliance));
     const filteredAppliance = Array.from(new Set(appliances));
@@ -62,6 +97,9 @@ function searchRecipe(data) {
     let itemsIngredients = [];
     let itemsAppliance = [];
     let itemsUstensils = [];
+    
+    let isSearching = false; 
+    let remainingRecipes = [];
 
     for (const items of data) {
         itemsRecipes.push(items);
@@ -82,43 +120,37 @@ function searchRecipe(data) {
     displayAppliances(data);
     displayUstensiles(data);
 
-    // let listIngredients = [],
-    //     listAppliance = [],
-    //     listUstensil = [];
-
-    // // itemsRecipes.forEach(recipe => {
-    // //     listIngredients.push(recipe.ingredients.map(ingredient => ingredient.ingredient));
-    // //     listAppliance.push(recipe.appliance);
-    // //     listUstensil.push(recipe.ustensils);
-    // // })
-
-    // // console.log(listIngredients)
-
+    let tags = []
 
     let tagItem = function(items) {
         const tagList = document.getElementById("tags");
-        const tags = document.querySelectorAll('.tag-item');
+
         items.onclick = function(e) {
-            console.log(items)
             e.preventDefault()
             let item = e.target.textContent
-            console.log(e.target.textContent)
+            tags.push(item);
+            tags.forEach((tag) => {
+                displayRecipeByTags(tag)
+                isSearching = true
+            })
             if (items == ingredientsList && item) {
                 tagList.innerHTML += `<p class="tag-item btn btn-primary m-3">${item}</p>`
                 displayRecipeByTags(item)
+                displaySearchBarTag()
                 e.target.style.display = "none"
             } else if (items == applianceList) {
                 tagList.innerHTML += `<p class="tag-item btn btn-success m-3">${item}</p>`
                 displayRecipeByTags(item)
+                displaySearchBarTag()
                 e.target.style.display = "none"
             } else if (items == ustensilsList) {
                 tagList.innerHTML += `<p class="tag-item btn btn-danger m-3">${item}</p>`
                 displayRecipeByTags(item)
+                displaySearchBarTag()
                 e.target.style.display = "none"
             }
 
         }
-
         
     }
 
@@ -127,22 +159,33 @@ function searchRecipe(data) {
     tagItem(ustensilsList)
 
     function displayRecipeByTags(tag){
+        let recipes = [];
 
-        const foundRecipes = itemsRecipes.filter(item => item.name.toLowerCase().includes(tag.toLowerCase()));
-        const foundIngredients = itemsRecipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
-        const foundDescription = itemsRecipes.filter(item => item.description.toLowerCase().includes(tag.toLowerCase()));
+        if(isSearching) {
+            recipes = remainingRecipes;
+        } else {
+            recipes = itemsRecipes;
+        }
+
+        const foundRecipes = recipes.filter(item => item.name.toLowerCase().includes(tag.toLowerCase()));
+        const foundIngredients = recipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
+        const foundDescription = recipes.filter(item => item.description.toLowerCase().includes(tag.toLowerCase()));
         const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
+        remainingRecipes = results;
 
         function displayResult(cardRecipes) {
             recipesList.innerHTML = "";
             cardRecipes.forEach(item => {
                 const recipesModel = recipesFactory(item)
                 const recipesDOM = recipesModel.showRecipes(item)
-                recipesList.innerHTML += recipesDOM
+                recipesList.innerHTML += recipesDOM              
             })
             if (recipesList.innerHTML == "") {
                 recipesList.innerHTML = `<p class="no-found">Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson »</p>`
             }
+            displayIngredients(results);
+            displayAppliances(results);
+            displayUstensiles(results);
         }
 
         displayResult(results)

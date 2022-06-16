@@ -11174,10 +11174,59 @@ p {
   font-size: 12px;
 }
 
+.input-search {
+  background-color: lightgray !important;
+  height: 69px;
+}
+
+#tags .tag-item {
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+}
+#tags .tag-item:hover {
+  color: black !important;
+}
+#tags .delete-tag {
+  position: relative;
+  background-image: url("../../public/assets/icons/close-icon.png") no-repeat;
+  bottom: 2px;
+  margin-left: 5px;
+  width: 20px;
+  height: 20px;
+}
+
+.btn-group .dropdown-toggle {
+  font-size: 18px;
+  height: 69px;
+  border-radius: 5px;
+}
+.btn-group .dropdown-toggle.show {
+  width: 667px;
+}
+.btn-group .dropdown-toggle.show::placeholder {
+  color: lightgrey;
+}
+.btn-group input::placeholder {
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  text-align: start;
+}
+.btn-group input.btn {
+  text-align: start;
+}
 .btn-group ul.show {
-  width: 577px;
+  width: 677px;
   flex-flow: row wrap;
   display: flex;
+}
+.btn-group ul.show .dropdown-item {
+  color: white;
+  font-weight: 600;
+}
+.btn-group ul.show .dropdown-item:hover {
+  color: black !important;
 }
 
 /*# sourceMappingURL=style.css.map */

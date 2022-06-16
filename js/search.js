@@ -15,37 +15,6 @@ async function dataRecipe() {
     return recipesData
 }
 
-function displaySearchBarTag(){
-    let optionBtn = document.querySelectorAll(".dropdown-toggle")
-    let searchbarTag = document.createElement('input');
-    searchbarTag.setAttribute('type','text');
-    searchbarTag.classList.add('searchbarTag', 'btn', 'btn-primary', 'dropdown-toggle');
-
-    searchbarTag.onkeyup = function () {
-        let searchbarTagValue = searchbarTag.value ; 
-        console.log(value)
-
-        
-
-
-    }
-    optionBtn.forEach(btn => {
-        if(btn.style.display = "block"){
-            searchbarTag.style.display = "none"
-        }      
-        btn.onclick = function (e) {
-            console.log(e.currentTarget)
-            e.target.parentElement.appendChild(searchbarTag)
-            if (searchbarTag.style.display = "none") {
-                searchbarTag.style.display = "block"
-                searchbarTag.focus()
-                btn.style.display = "none"       
-            }
-        }
-    })
-}
-displaySearchBarTag()
-
 function displayIngredients(recipes) {
 
     let ingredients = [];
@@ -56,10 +25,11 @@ function displayIngredients(recipes) {
         });
     })
     const filteredIngredients = Array.from(new Set(ingredients));
+    console.log(filteredIngredients)
     const ingredientsList = document.querySelector('.ingredient-list');
     ingredientsList.innerHTML = ``;
     filteredIngredients.forEach(item => {
-        ingredientsList.innerHTML += `<li class="bg-primary"><a class="dropdown-item" href="#">${item}</a></li> `
+        ingredientsList.innerHTML += `<li class="col-4 bg-primary"><a class="dropdown-item" href="#">${item}</a></li> `
     })
 }
 
@@ -92,6 +62,7 @@ function displayUstensiles(recipes) {
     })
 }
 
+
 function searchRecipe(data) {
     let itemsRecipes = [];
     let itemsIngredients = [];
@@ -108,12 +79,26 @@ function searchRecipe(data) {
         itemsUstensils.push(items.ustensils)
     }
 
+    const dropdownToggle = document.querySelectorAll('.dropdown-toggle');
     const searchInput = document.querySelector('.input-search');
     const ingredientsList = document.querySelector('.ingredient-list');
     const applianceList = document.querySelector('.appliance-list');
     const ustensilsList = document.querySelector('.ustensil-list');
     let recipesList = document.getElementById('bloc-recipe');
 
+    dropdownToggle.forEach(dropdown => {
+            
+        dropdown.onfocus = function(e) {
+             if(e.target.classList.contains('btn-primary')){
+                e.target.setAttribute('placeholder', 'Rechercher un ingredient')
+             } else if (e.target.classList.contains('btn-success')) {
+                e.target.setAttribute('placeholder', 'Rechercher un appareil')
+             } else if (e.target.classList.contains('btn-danger')){
+                e.target.setAttribute('placeholder', 'Rechercher un ustensil')
+             }
+        }
+    })
+    
     // j'affiche les resultat des filtre dans le dropdown des ingredients
 
     displayIngredients(data);
@@ -121,42 +106,55 @@ function searchRecipe(data) {
     displayUstensiles(data);
 
     let tags = []
+    let tagItems = function(items) {
+        const tagList = document.getElementById("tags")
 
-    let tagItem = function(items) {
-        const tagList = document.getElementById("tags");
 
         items.onclick = function(e) {
             e.preventDefault()
             let item = e.target.textContent
             tags.push(item);
+            console.log(tags)
+
             tags.forEach((tag) => {
+                console.log(tag)
                 displayRecipeByTags(tag)
                 isSearching = true
             })
+            console.log(e.target)
+            e.target.style.display = 'none'
             if (items == ingredientsList && item) {
-                tagList.innerHTML += `<p class="tag-item btn btn-primary m-3">${item}</p>`
-                displayRecipeByTags(item)
-                displaySearchBarTag()
-                e.target.style.display = "none"
-            } else if (items == applianceList) {
-                tagList.innerHTML += `<p class="tag-item btn btn-success m-3">${item}</p>`
-                displayRecipeByTags(item)
-                displaySearchBarTag()
-                e.target.style.display = "none"
-            } else if (items == ustensilsList) {
-                tagList.innerHTML += `<p class="tag-item btn btn-danger m-3">${item}</p>`
-                displayRecipeByTags(item)
-                displaySearchBarTag()
-                e.target.style.display = "none"
-            }
+                tagList.innerHTML += `<button class="tag-item btn btn-primary m-3">${item}
+                                        <span class="delete-tag">
+                                            <img src="./public/assets/icons/close-icon.png" alt="icon-close">
+                                        </span>
+                                      </button>`
 
+            } else if (items == applianceList) {
+                tagList.innerHTML += `<button class="tag-item btn btn-success m-3">${item}
+                                        <span class="delete-tag">
+                                            <img src="./public/assets/icons/close-icon.png" alt="icon-close">
+                                        </span>
+                                      </button>`
+                e.target.style.display = 'none'
+            } else if (items == ustensilsList) {
+                tagList.innerHTML += `<button class="tag-item btn btn-danger m-3">${item}
+                                        <span class="delete-tag">
+                                        <img src="./public/assets/icons/close-icon.png" alt="icon-close">
+                                        </span>
+                                      </button`
+                e.target.style.display = 'none'
+            }            
         }
         
     }
+    
+    const tagItem = document.querySelectorAll(".tag-item")
+    tagItem.forEach(el => console.log(el))
 
-    tagItem(ingredientsList)
-    tagItem(applianceList)
-    tagItem(ustensilsList)
+    tagItems(ingredientsList)
+    tagItems(applianceList)
+    tagItems(ustensilsList)
 
     function displayRecipeByTags(tag){
         let recipes = [];
@@ -187,9 +185,68 @@ function searchRecipe(data) {
             displayAppliances(results);
             displayUstensiles(results);
         }
-
         displayResult(results)
     }
+    dropdownToggle.forEach(dropdown => {
+        dropdown.onkeyup = function (e){
+            let newIngredientList = [];
+            let newApplianceList = [];
+            let newUstensilList = [];  
+            
+            data.forEach(thisData => {
+                thisData.ingredients.forEach(ingredient => {
+                    newIngredientList.push(ingredient.ingredient)
+                })
+                newApplianceList.push(thisData.appliance)
+                newUstensilList.push(thisData.ustensils)
+            })
+
+
+            const ingredientsListToFilter = [...new Set (newIngredientList)]
+            console.log(ingredientsListToFilter)
+
+            const applianceListToFilter = Array.from(new Set (newApplianceList))
+            console.log(applianceListToFilter)
+
+            const ustensilsListToFilter = Array.from(new Set (newApplianceList))
+            console.log(applianceListToFilter)
+
+
+            const searchValue = e.target.value
+            console.log(searchValue)
+            const foundIngredientsList =  ingredientsListToFilter.filter(item => item.toLowerCase().includes(searchValue.toLowerCase()))
+            const foundApplianceList = applianceListToFilter.filter(item => item.toLowerCase().includes(searchValue.toLowerCase()))
+            const foundUstensilList = ustensilsListToFilter.filter(item => item.toLowerCase().includes(searchValue.toLowerCase()) )
+            const results = [...new Set([...foundIngredientsList, ...foundApplianceList, ...foundUstensilList])]
+            console.log(results)
+
+            if (searchValue.length >= 2) {
+                if(e.target.classList.contains('btn-primary')){
+                    ingredientsList.innerHTML = ""
+                    foundIngredientsList.forEach(item => {
+                        ingredientsList.innerHTML += `<li class="col-4 bg-primary"><a class="dropdown-item" href="#">${item}</a></li> `
+                    })
+                    
+                }
+                
+                if(e.target.classList.contains('btn-success')){
+                   applianceList.innerHTML = ""
+                    foundApplianceList.forEach(item => {
+                       applianceList.innerHTML += `<li class="col-4 bg-success"><a class="dropdown-item" href="#">${item}</a></li> `
+                    })
+                    
+                }
+
+                if(e.target.classList.contains('btn-danger')){
+                    ustensilsList.innerHTML = ""
+                     foundUstensilList.forEach(item => {
+                        ustensilsList.innerHTML += `<li class="col-4 bg-success"><a class="dropdown-item" href="#">${item}</a></li> `
+                     })
+                     
+                 }
+            } 
+        }
+    })
 
     // recherche des recettes par nom, ingrédients et description avec la barre principale de la page.
     searchInput.onkeyup = function() {
@@ -198,9 +255,9 @@ function searchRecipe(data) {
         if (searchInputValue.length < 2) {
             return
         }
-        const foundRecipes = itemsRecipes.filter(item => item.name.toLowerCase().includes(searchInputValue.toLowerCase()));
-        const foundIngredients = itemsRecipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(searchInputValue.toLowerCase())));
-        const foundDescription = itemsRecipes.filter(item => item.description.toLowerCase().includes(searchInputValue.toLowerCase()));
+        const foundRecipes = data.filter(item => item.name.toLowerCase().includes(searchInputValue.toLowerCase()));
+        const foundIngredients = data.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(searchInputValue.toLowerCase())));
+        const foundDescription = data.filter(item => item.description.toLowerCase().includes(searchInputValue.toLowerCase()));
         const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
 
         if (searchInputValue.length >= 2) {

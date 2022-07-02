@@ -27,6 +27,19 @@ let isSearching = false;
 let remainingRecipes = [];
 let tags = []
 
+function deleteTags(){
+    let buttonTag = document.querySelectorAll('.tag-item');
+
+    let deleteTag = document.querySelectorAll('.delete-tag'); 
+
+    for (closeItem of deleteTag){
+        closeItem.onclick = function (e){
+            e.target.style.display = none
+        }
+    }
+}
+deleteTags()
+
 function displayResult(cardRecipes) {
     recipesList.innerHTML = "";
     for ( item of cardRecipes){
@@ -79,7 +92,6 @@ function displayUstensils(recipes) {
 
     for( recipe of recipes){
         for (ustensil of recipe.ustensils){
-            console.log(ustensil)
             ustensils.push(ustensil.toLowerCase())
         }
     }
@@ -92,8 +104,6 @@ function displayUstensils(recipes) {
     }
 }
 
-
-
 function searchRecipe(data){
 
      // j'affiche les resultat des filtre dans le dropdown des ingredients
@@ -104,20 +114,20 @@ function searchRecipe(data){
 
      function tagItems (items) {
         const tagList = document.getElementById("tags")
-
+        
         items.onclick = function(e) {
             e.preventDefault()
+ 
             let item = e.target.textContent
             tags.push(item);
-            console.log(tags)
-
+           
             for (tag of tags){
                 displayRecipeByTags(tag)
                 isSearching = true
             }
-            console.log(e.target)
-            e.target.style.display = 'none'
-            if (items == ingredientsList && item) {
+
+            if (items == ingredientsList) {
+                e.target.style.display = 'none'
                 tagList.innerHTML += `<button class="tag-item btn btn-primary m-3">${item}
                                         <span class="delete-tag">
                                             <img src="./public/assets/icons/close-icon.png" alt="icon-close">
@@ -125,25 +135,24 @@ function searchRecipe(data){
                                       </button>`
 
             } else if (items == applianceList) {
+                e.target.style.display = 'none'
                 tagList.innerHTML += `<button class="tag-item btn btn-success m-3">${item}
                                         <span class="delete-tag">
                                             <img src="./public/assets/icons/close-icon.png" alt="icon-close">
                                         </span>
                                       </button>`
-                e.target.style.display = 'none'
             } else if (items == ustensilsList) {
+                e.target.style.display = 'none'
                 tagList.innerHTML += `<button class="tag-item btn btn-danger m-3">${item}
                                         <span class="delete-tag">
                                         <img src="./public/assets/icons/close-icon.png" alt="icon-close">
                                         </span>
                                       </button`
-                e.target.style.display = 'none'
-            }            
+            }     
+       
         }
         
     }
-
-
     tagItems(ingredientsList)
     tagItems(applianceList)
     tagItems(ustensilsList)
@@ -152,9 +161,6 @@ function searchRecipe(data){
         let recipes = [];
         let results = [];
         let itemsRecipes = [];
-    
-        console.log(data)
-        console.log(tag)
     
         if(isSearching) {
             recipes = remainingRecipes;
@@ -171,15 +177,12 @@ function searchRecipe(data){
             if(foundDescription){
                 results.push(recipes)
             }
-            console.log(recipes.ingredients)
             for (ingredient of recipes.ingredients){
-                console.log(ingredient.ingredient)
                 const itemsInIngredient = ingredient.ingredient.toLowerCase().includes(tag.toLowerCase());
     
               if (itemsInIngredient){
                   results.push(recipes)
               }
-    
             }
         }
         remainingRecipes = results;
@@ -200,8 +203,8 @@ function searchRecipe(data){
         }
         displayResult(results)
     }
-    console.log(data)
     let result = []
+    //recherche des recettes par barre input principale 
     searchInput.onkeyup = function () {
          const searchInputValue = searchInput.value;
          
@@ -219,9 +222,8 @@ function searchRecipe(data){
             if(foundDescription){
                 result.push(recipes)
             }
-            console.log(recipes.ingredients)
+
             for (ingredient of recipes.ingredients){
-                console.log(ingredient.ingredient)
                 const itemsInIngredient = ingredient.ingredient.toLowerCase().includes(searchInputValue.toLowerCase());
 
               if (itemsInIngredient){
@@ -243,9 +245,88 @@ function searchRecipe(data){
 
     }
     
+    //recherche des recettes par input dropdown
+    for (dropdownInput of dropdownToggle){
 
+        dropdownInput.onkeyup = function (e){
+            let newApplianceList = []
+            let newIngredientList = [];
+            let newUstensilList = [];
+            const searchValue = e.target.value;
+
+            for(items of data ){
+                newApplianceList.push(items.appliance.toLowerCase());
+
+                for(ingredient of items.ingredients){
+                    newIngredientList.push(ingredient.ingredient.toLowerCase())
+                }
+
+                for(ustensil of items.ustensils){
+                    newUstensilList.push(ustensil.toLowerCase())
+                } 
+                    
+            }
+
+            const foundIngredients = Array.from(new Set (newIngredientList));
+            const foundAppliances = Array.from(new Set (newApplianceList));
+            const foundUstensils = Array.from(new Set (newUstensilList));
+
+            let resultUstensil = [];
+            let resultIngredient = [];
+            let resultAppliance = []; 
+            
+
+            if (searchValue.length >= 2) {
+
+                for(item of foundIngredients){
+                    let filter = item.includes(searchValue.toLowerCase())
+                    if (filter){
+                        resultIngredient.push(item)
+                    }         
+                }
+
+                if( e.target.classList.contains('btn-primary')){
+                    ingredientsList.innerHTML = ""
+                    for (items of resultIngredient){
+                    ingredientsList.innerHTML += `<li class="col-4 bg-primary"><a class="dropdown-item" href="#">${items}</a></li> `
+                    }                      
+                }
+
+
+                for (item of foundUstensils){
+                    let filter = item.includes(searchValue.toLowerCase())
+                    if (filter){
+                        resultUstensil.push(item)
+                    } 
+                }
+
+                if(e.target.classList.contains('btn-danger')){
+                    ustensilsList.innerHTML = ""               
+                    for (items of resultUstensil){
+                    ustensilsList.innerHTML += `<li class="col-4 bg-danger"><a class="dropdown-item" href="#">${items}</a></li> ` 
+                    }
+                }
+                
+                for (item of foundAppliances){
+                    let filter = item.includes(searchValue.toLowerCase())
+                    if (filter){
+                        resultAppliance.push(item)
+                    } 
+                }
+
+                if(e.target.classList.contains('btn-success')){
+                    applianceList.innerHTML = ""
+                    for(items of resultAppliance){
+                        applianceList.innerHTML += `<li class="col-4 bg-success"><a class="dropdown-item" href="#">${items}</a></li> `
+                    }         
+                }
+
+
+            }
+
+        }
+    }
 }
-
 async function displayRecipes(recipes) {
     const recipeTag = document.getElementById('bloc-recipe')
     for (recipe of recipes){

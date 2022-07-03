@@ -21,7 +21,7 @@ function displayIngredients(recipes) {
 
     recipes.forEach((recipe) => {
         recipe.ingredients.forEach((ingredient) => {
-            ingredients.push(ingredient.ingredient);
+            ingredients.push(ingredient.ingredient.toLowerCase());
         });
     })
     const filteredIngredients = Array.from(new Set(ingredients));
@@ -38,7 +38,7 @@ function displayAppliances(recipes) {
     searchbarTag.setAttribute('type','text');
     searchbarTag.classList.add('show');
     let appliances = [];
-    recipes.forEach(recipe => appliances.push(recipe.appliance));
+    recipes.forEach(recipe => appliances.push(recipe.appliance.toLowerCase()));
     const filteredAppliance = Array.from(new Set(appliances));
     console.log(filteredAppliance);
 
@@ -51,7 +51,7 @@ function displayAppliances(recipes) {
 
 function displayUstensiles(recipes) {
     let ustensiles = [];
-    recipes.forEach(recipe => recipe.ustensils.forEach(ustensile => ustensiles.push(ustensile)));
+    recipes.forEach(recipe => recipe.ustensils.forEach(ustensile => ustensiles.push(ustensile.toLowerCase())));
     const filteredUstensiles = Array.from(new Set(ustensiles));
     console.log(filteredUstensiles);
 
@@ -195,14 +195,14 @@ function searchRecipe(data) {
             
             data.forEach(thisData => {
                 thisData.ingredients.forEach(ingredient => {
-                    newIngredientList.push(ingredient.ingredient)
+                    newIngredientList.push(ingredient.ingredient.toLowerCase())
                 })
-                newApplianceList.push(thisData.appliance)
-                newUstensilList.push(thisData.ustensils)
+                thisData.ustensils.forEach(ustensil => newUstensilList.push(ustensil.toLowerCase()))
+                newApplianceList.push(thisData.appliance.toLowerCase())
+               
             })
 
-
-            const ingredientsListToFilter = [...new Set (newIngredientList)]
+            const ingredientsListToFilter = Array.from(new Set (newIngredientList))
             console.log(ingredientsListToFilter)
 
             const applianceListToFilter = Array.from(new Set (newApplianceList))
@@ -213,12 +213,12 @@ function searchRecipe(data) {
 
 
             const searchValue = e.target.value
-            console.log(searchValue)
-            const foundIngredientsList =  ingredientsListToFilter.filter(item => item.toLowerCase().includes(searchValue.toLowerCase()))
-            const foundApplianceList = applianceListToFilter.filter(item => item.toLowerCase().includes(searchValue.toLowerCase()))
-            const foundUstensilList = ustensilsListToFilter.filter(item => item.toLowerCase().includes(searchValue.toLowerCase()) )
-            const results = [...new Set([...foundIngredientsList, ...foundApplianceList, ...foundUstensilList])]
-            console.log(results)
+
+            const foundIngredientsList =  ingredientsListToFilter.filter(item => item.includes(searchValue.toLowerCase()))
+            const foundApplianceList = applianceListToFilter.filter(item => item.includes(searchValue.toLowerCase()))
+            const foundUstensilList = ustensilsListToFilter.filter(item => item.includes(searchValue.toLowerCase()))
+            const result = [... new Set (foundIngredientsList)]
+
 
             if (searchValue.length >= 2) {
                 if(e.target.classList.contains('btn-primary')){
@@ -240,7 +240,7 @@ function searchRecipe(data) {
                 if(e.target.classList.contains('btn-danger')){
                     ustensilsList.innerHTML = ""
                      foundUstensilList.forEach(item => {
-                        ustensilsList.innerHTML += `<li class="col-4 bg-success"><a class="dropdown-item" href="#">${item}</a></li> `
+                        ustensilsList.innerHTML += `<li class="col-4 bg-danger"><a class="dropdown-item" href="#">${item}</a></li> `
                      })
                      
                  }

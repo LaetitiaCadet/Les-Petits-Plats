@@ -11154,7 +11154,7 @@ p {
 }
 .card .card-body .card-icon-time {
   display: block;
-  background-image: url("/public/assets/icon-time.png");
+  background-image: url("../../public/assets/icon-time.png");
   background-repeat: no-repeat;
   width: 20px;
   height: 20px;

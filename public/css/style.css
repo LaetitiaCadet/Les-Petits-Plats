@@ -11220,6 +11220,8 @@ p {
   width: 677px;
   flex-flow: row wrap;
   display: flex;
+  overflow: hidden;
+  overflow-y: scroll;
 }
 .btn-group ul.show .dropdown-item {
   color: white;
@@ -11227,6 +11229,9 @@ p {
 }
 .btn-group ul.show .dropdown-item:hover {
   color: black !important;
+}
+.btn-group ul.bg-primary {
+  height: 300px;
 }
 
 /*# sourceMappingURL=style.css.map */

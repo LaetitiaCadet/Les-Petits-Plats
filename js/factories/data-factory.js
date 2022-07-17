@@ -31,9 +31,10 @@ function recipesFactory (data) {
         </div>
         `                
     }
-
     return {
         id, name, servings, ingredients, time, description, appliance, ustensils,
         showRecipes,
     }
 }
+
+

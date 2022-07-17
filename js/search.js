@@ -2,7 +2,6 @@ async function getRecipes() {
     try {
         // const response = await fetch("../data/recipes.json");
         const response = await fetch ('data/recipes.json')
-        console.log(response)
         const recipes = await response.json();
 
         return recipes;
@@ -17,6 +16,14 @@ async function dataRecipe() {
     return recipesData
 }
 
+const dropdownToggle = document.querySelectorAll('.dropdown-toggle');
+const searchInput = document.querySelector('.input-search');
+const ingredientsList = document.querySelector('.ingredient-list');
+const applianceList = document.querySelector('.appliance-list');
+const ustensilsList = document.querySelector('.ustensil-list');
+let recipesList = document.getElementById('bloc-recipe');
+const tagList = document.getElementById("tags")
+
 function displayIngredients(recipes) {
 
     let ingredients = [];
@@ -27,7 +34,6 @@ function displayIngredients(recipes) {
         });
     })
     const filteredIngredients = Array.from(new Set(ingredients));
-    console.log(filteredIngredients)
     const ingredientsList = document.querySelector('.ingredient-list');
     ingredientsList.innerHTML = ``;
     filteredIngredients.forEach(item => {
@@ -42,7 +48,6 @@ function displayAppliances(recipes) {
     let appliances = [];
     recipes.forEach(recipe => appliances.push(recipe.appliance.toLowerCase()));
     const filteredAppliance = Array.from(new Set(appliances));
-    console.log(filteredAppliance);
 
     const applianceList = document.querySelector('.appliance-list');
     applianceList.innerHTML = ``;
@@ -55,7 +60,6 @@ function displayUstensiles(recipes) {
     let ustensiles = [];
     recipes.forEach(recipe => recipe.ustensils.forEach(ustensile => ustensiles.push(ustensile.toLowerCase())));
     const filteredUstensiles = Array.from(new Set(ustensiles));
-    console.log(filteredUstensiles);
 
     const ustensilsList = document.querySelector('.ustensil-list');
     ustensilsList.innerHTML = ``;
@@ -64,6 +68,28 @@ function displayUstensiles(recipes) {
     })
 }
 
+function displayResult(cardRecipes) {
+    recipesList.innerHTML = "";
+    cardRecipes.forEach(item => {
+        const recipesModel = recipesFactory(item)
+        const recipesDOM = recipesModel.showRecipes(item)
+        recipesList.innerHTML += recipesDOM              
+    })
+    if (recipesList.innerHTML == "") {
+        recipesList.innerHTML = `<p class="no-found">Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson »</p>`
+    }
+}
+function deleteTag(){
+    let btnTag = document.querySelectorAll('.tag-item');
+    btnTag.forEach(btn => {
+        btn.onclick = function (e){
+            let item = e.target
+            item.style.display = "none";
+            tagList.removeChild(tagList.lastChild)
+        }
+    })
+}
+deleteTag()
 
 function searchRecipe(data) {
     let itemsRecipes = [];
@@ -81,36 +107,12 @@ function searchRecipe(data) {
         itemsUstensils.push(items.ustensils)
     }
 
-    const dropdownToggle = document.querySelectorAll('.dropdown-toggle');
-    const searchInput = document.querySelector('.input-search');
-    const ingredientsList = document.querySelector('.ingredient-list');
-    const applianceList = document.querySelector('.appliance-list');
-    const ustensilsList = document.querySelector('.ustensil-list');
-    let recipesList = document.getElementById('bloc-recipe');
-
-    dropdownToggle.forEach(dropdown => {
-            
-        dropdown.onfocus = function(e) {
-             if(e.target.classList.contains('btn-primary')){
-                e.target.setAttribute('placeholder', 'Rechercher un ingredient')
-             } else if (e.target.classList.contains('btn-success')) {
-                e.target.setAttribute('placeholder', 'Rechercher un appareil')
-             } else if (e.target.classList.contains('btn-danger')){
-                e.target.setAttribute('placeholder', 'Rechercher un ustensil')
-             }
-        }
-    })
-    
-    // j'affiche les resultat des filtre dans le dropdown des ingredients
-
     displayIngredients(data);
     displayAppliances(data);
     displayUstensiles(data);
 
     let tags = []
     let tagItems = function(items) {
-        const tagList = document.getElementById("tags")
-
 
         items.onclick = function(e) {
             e.preventDefault()
@@ -118,41 +120,42 @@ function searchRecipe(data) {
             tags.push(item);
             console.log(tags)
 
+            e.target.style.display='none'
+
             tags.forEach((tag) => {
                 console.log(tag)
                 displayRecipeByTags(tag)
                 isSearching = true
             })
-            console.log(e.target)
-            e.target.style.display = 'none'
+
             if (items == ingredientsList && item) {
-                tagList.innerHTML += `<button class="tag-item btn btn-primary m-3">${item}
+                tagList.innerHTML += `<button class="tag-item btn btn-primary m-3" onclick='deleteTag()'>${item}
                                         <span class="delete-tag">
-                                            <img src="./public/assets/icons/close-icon.png" alt="icon-close">
+                                            <img src="./public/assets/icons/close-icon.png" class="delete-tag-icon" alt="icon-close">
                                         </span>
                                       </button>`
 
             } else if (items == applianceList) {
-                tagList.innerHTML += `<button class="tag-item btn btn-success m-3">${item}
+                tagList.innerHTML += `<button class="tag-item btn btn-success m-3" onclick='deleteTag()'>${item}
                                         <span class="delete-tag">
-                                            <img src="./public/assets/icons/close-icon.png" alt="icon-close">
+                                            <img src="./public/assets/icons/close-icon.png" class="delete-tag-icon" alt="icon-close">
                                         </span>
                                       </button>`
                 e.target.style.display = 'none'
             } else if (items == ustensilsList) {
-                tagList.innerHTML += `<button class="tag-item btn btn-danger m-3">${item}
+                tagList.innerHTML += `<button class="tag-item btn btn-danger m-3" onclick='deleteTag()'>${item}
                                         <span class="delete-tag">
-                                        <img src="./public/assets/icons/close-icon.png" alt="icon-close">
+                                        <img src="./public/assets/icons/close-icon.png" class="delete-tag-icon" alt="icon-close">
                                         </span>
                                       </button`
                 e.target.style.display = 'none'
-            }            
+            }
+
         }
+
+        
         
     }
-    
-    const tagItem = document.querySelectorAll(".tag-item")
-    tagItem.forEach(el => console.log(el))
 
     tagItems(ingredientsList)
     tagItems(applianceList)
@@ -166,6 +169,7 @@ function searchRecipe(data) {
         } else {
             recipes = itemsRecipes;
         }
+        console.log(itemsRecipes)
 
         const foundRecipes = recipes.filter(item => item.name.toLowerCase().includes(tag.toLowerCase()));
         const foundIngredients = recipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
@@ -173,22 +177,15 @@ function searchRecipe(data) {
         const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
         remainingRecipes = results;
 
-        function displayResult(cardRecipes) {
-            recipesList.innerHTML = "";
-            cardRecipes.forEach(item => {
-                const recipesModel = recipesFactory(item)
-                const recipesDOM = recipesModel.showRecipes(item)
-                recipesList.innerHTML += recipesDOM              
-            })
-            if (recipesList.innerHTML == "") {
-                recipesList.innerHTML = `<p class="no-found">Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson »</p>`
-            }
-            displayIngredients(results);
-            displayAppliances(results);
-            displayUstensiles(results);
-        }
+
+        displayIngredients(results);
+        displayAppliances(results);
+        displayUstensiles(results);
+        
         displayResult(results)
+            
     }
+
     dropdownToggle.forEach(dropdown => {
         dropdown.onkeyup = function (e){
             let newIngredientList = [];
@@ -219,7 +216,6 @@ function searchRecipe(data) {
             const foundIngredientsList =  ingredientsListToFilter.filter(item => item.includes(searchValue.toLowerCase()))
             const foundApplianceList = applianceListToFilter.filter(item => item.includes(searchValue.toLowerCase()))
             const foundUstensilList = ustensilsListToFilter.filter(item => item.includes(searchValue.toLowerCase()))
-            const result = [... new Set (foundIngredientsList)]
 
 
             if (searchValue.length >= 2) {
@@ -265,17 +261,6 @@ function searchRecipe(data) {
         if (searchInputValue.length >= 2) {
             recipesList.innerHTML = "";
 
-            function displayResult(cardRecipes) {
-                recipesList.innerHTML = "";
-                cardRecipes.forEach(item => {
-                    const recipesModel = recipesFactory(item)
-                    const recipesDOM = recipesModel.showRecipes(item)
-                    recipesList.innerHTML += recipesDOM
-                })
-                if (recipesList.innerHTML == "") {
-                    recipesList.innerHTML = `<p class="no-found">Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson »</p>`
-                }
-            }
             displayResult(results)
             displayIngredients(results);
             displayAppliances(results);
@@ -283,6 +268,8 @@ function searchRecipe(data) {
         }
     }
 }
+
+
 
 async function displayRecipes(recipes) {
     const recipeTag = document.getElementById('bloc-recipe')

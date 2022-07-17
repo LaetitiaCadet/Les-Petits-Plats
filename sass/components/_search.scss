@@ -48,6 +48,8 @@
         width: 677px;
         flex-flow: row wrap;
         display: flex;
+        overflow: hidden;
+        overflow-y: scroll;
     
         .dropdown-item{
             color:white; 
@@ -56,6 +58,10 @@
         .dropdown-item:hover{
             color:black !important;   
         }
+    }
+
+    ul.bg-primary{
+        height: 300px;
     }
 }
 

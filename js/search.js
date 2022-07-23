@@ -1,3 +1,5 @@
+//fetch data
+
 async function getRecipes() {
     try {
         // const response = await fetch("../data/recipes.json");
@@ -24,6 +26,8 @@ const ustensilsList = document.querySelector('.ustensil-list');
 let recipesList = document.getElementById('bloc-recipe');
 const tagList = document.getElementById("tags")
 
+
+//Affichage de la liste des option d'ingredients
 function displayIngredients(recipes) {
 
     let ingredients = [];
@@ -40,7 +44,7 @@ function displayIngredients(recipes) {
         ingredientsList.innerHTML += `<li class="col-4 bg-primary"><a class="dropdown-item" href="#">${item}</a></li> `
     })
 }
-
+//Affichage de la liste des option des appareils
 function displayAppliances(recipes) {
     let searchbarTag = document.createElement('input');
     searchbarTag.setAttribute('type','text');
@@ -55,7 +59,7 @@ function displayAppliances(recipes) {
         applianceList.innerHTML += `<li class="bg-success"><a class="dropdown-item" href="#">${appliance}</a></li>`
     })
 }
-
+//Affichage de la liste des option des ustensils
 function displayUstensiles(recipes) {
     let ustensiles = [];
     recipes.forEach(recipe => recipe.ustensils.forEach(ustensile => ustensiles.push(ustensile.toLowerCase())));
@@ -68,6 +72,7 @@ function displayUstensiles(recipes) {
     })
 }
 
+//componnent d'affichage des resultats des recettes 
 function displayResult(cardRecipes) {
     recipesList.innerHTML = "";
     cardRecipes.forEach(item => {
@@ -79,18 +84,21 @@ function displayResult(cardRecipes) {
         recipesList.innerHTML = `<p class="no-found">Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson »</p>`
     }
 }
-function deleteTag(){
-    let btnTag = document.querySelectorAll('.tag-item');
-    btnTag.forEach(btn => {
-        btn.onclick = function (e){
-            let item = e.target
-            item.style.display = "none";
-            tagList.removeChild(tagList.lastChild)
-        }
-    })
-}
-deleteTag()
+// function deleteTag(recipes){
+//     let btnTag = document.querySelectorAll('.tag-item');
+//     btnTag.forEach(btn => {
+//         btn.onclick = function (e){
+//             let item = e.target
+//             item.style.display = "none";
+//             tagList.removeChild(tagList.lastChild)
+//         }
+//         if (tagList === 0){
+//             displayRecipes(data)
+//         }
+//     })
+// }
 
+// Recherche de recette par search bar principal par tag et par searchbarTag 
 function searchRecipe(data) {
     let itemsRecipes = [];
     let itemsIngredients = [];

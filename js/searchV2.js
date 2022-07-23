@@ -1,8 +1,7 @@
 async function getRecipes(){
     try {
-        const response = await fetch('../data/recipes.json');
+        const response = await fetch("./data/recipes.json");
         const recipes = await response.json();
-        console.log(recipes)
         return recipes
 
     } catch (err) {

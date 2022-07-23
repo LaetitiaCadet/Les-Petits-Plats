@@ -15,7 +15,7 @@ function recipesFactory (data) {
         }
         return `
         <div class="card mb-5" id="card-recipe-${id}" aria-hidden="true">
-            <img src="../../public/assets/image-recette.jpg" class="card-img-top" alt="...">
+            <img src="./public/assets/image-recette.jpg" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title placeholder-glow d-flex justify-content-between">
                     <span class="col-10">${name}</span>

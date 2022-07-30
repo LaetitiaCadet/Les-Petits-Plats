@@ -24,17 +24,45 @@
 }
 
 .btn-group {
+    
     .dropdown-toggle{
-        font-size: 18px;
         height: 69px;
         border-radius: 5px;
+        display: flex;
+        position: relative;
+        font-size: 18px;
+        font-weight: 500;
+        color: white;
+
     }
+
+    .expand{
+        background-image: url('./../../assets/icons/expanIcon.svg') ;
+        position: absolute;
+        top:15px;
+        right: 12px;
+        width: 37px;
+        height: 36px;
+        transition: all 0.5s;
+        z-index:3
+    }
+
+    .dropdown-toggle.show[aria-expanded="true"] .expand{
+        -webkit-transform: rotateX(180deg);
+        -moz-transform: rotateX(180deg);
+        transform: rotateX(180deg);
+
+    }
+
+
     .dropdown-toggle.show{
         width: 667px;
     }
     .dropdown-toggle.show::placeholder{
         color:lightgrey
     }
+
+
     input::placeholder{
         color: white; 
         font-weight:700;
@@ -63,6 +91,13 @@
     ul.bg-primary{
         height: 300px;
     }
+
+
+
+
+
+
+
 }
 
 

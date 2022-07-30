@@ -24,7 +24,10 @@ const ingredientsList = document.querySelector('.ingredient-list');
 const applianceList = document.querySelector('.appliance-list');
 const ustensilsList = document.querySelector('.ustensil-list');
 let recipesList = document.getElementById('bloc-recipe');
-const tagList = document.getElementById("tags")
+const tagList = document.getElementById("tags");
+let btnTag = document.querySelectorAll('.tag-item');
+let tags = [];
+let thisTag = [];
 
 
 //Affichage de la liste des option d'ingredients
@@ -72,7 +75,7 @@ function displayUstensiles(recipes) {
     })
 }
 
-//componnent d'affichage des resultats des recettes 
+//componnent d'affichage des resultats des recette 
 function displayResult(cardRecipes) {
     recipesList.innerHTML = "";
     cardRecipes.forEach(item => {
@@ -84,19 +87,8 @@ function displayResult(cardRecipes) {
         recipesList.innerHTML = `<p class="no-found">Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson »</p>`
     }
 }
-// function deleteTag(recipes){
-//     let btnTag = document.querySelectorAll('.tag-item');
-//     btnTag.forEach(btn => {
-//         btn.onclick = function (e){
-//             let item = e.target
-//             item.style.display = "none";
-//             tagList.removeChild(tagList.lastChild)
-//         }
-//         if (tagList === 0){
-//             displayRecipes(data)
-//         }
-//     })
-// }
+
+
 
 // Recherche de recette par search bar principal par tag et par searchbarTag 
 function searchRecipe(data) {
@@ -107,6 +99,7 @@ function searchRecipe(data) {
     
     let isSearching = false; 
     let remainingRecipes = [];
+    let remainingRecipesByTags = [];
 
     for (const items of data) {
         itemsRecipes.push(items);
@@ -119,55 +112,92 @@ function searchRecipe(data) {
     displayAppliances(data);
     displayUstensiles(data);
 
-    let tags = []
     let tagItems = function(items) {
 
         items.onclick = function(e) {
+            
             e.preventDefault()
             let item = e.target.textContent
             tags.push(item);
-            console.log(tags)
 
             e.target.style.display='none'
 
             tags.forEach((tag) => {
-                console.log(tag)
                 displayRecipeByTags(tag)
                 isSearching = true
             })
 
-            if (items == ingredientsList && item) {
-                tagList.innerHTML += `<button class="tag-item btn btn-primary m-3" onclick='deleteTag()'>${item}
-                                        <span class="delete-tag">
-                                            <img src="./public/assets/icons/close-icon.png" class="delete-tag-icon" alt="icon-close">
-                                        </span>
-                                      </button>`
+            e.target.style.display = 'none'
 
+            if (items == ingredientsList && item) {
+                displayTag(item)
+                tagList.lastChild.classList.add('btn-primary')
             } else if (items == applianceList) {
-                tagList.innerHTML += `<button class="tag-item btn btn-success m-3" onclick='deleteTag()'>${item}
-                                        <span class="delete-tag">
-                                            <img src="./public/assets/icons/close-icon.png" class="delete-tag-icon" alt="icon-close">
-                                        </span>
-                                      </button>`
-                e.target.style.display = 'none'
+                displayTag(item)
+                tagList.lastChild.classList.add('btn-success')
             } else if (items == ustensilsList) {
-                tagList.innerHTML += `<button class="tag-item btn btn-danger m-3" onclick='deleteTag()'>${item}
-                                        <span class="delete-tag">
-                                        <img src="./public/assets/icons/close-icon.png" class="delete-tag-icon" alt="icon-close">
-                                        </span>
-                                      </button`
-                e.target.style.display = 'none'
+                displayTag(item)
+                tagList.lastChild.classList.add('btn-danger')
             }
+
+
 
         }
 
-        
-        
+
     }
 
     tagItems(ingredientsList)
     tagItems(applianceList)
     tagItems(ustensilsList)
+
+
+    function displayTag(value){
+        let buttonTag = document.createElement('button');
+        let spanIcon = document.createElement('span');
+        let img = document.createElement('img');
+        buttonTag.classList.add('tag-item','btn','m-3');
+        spanIcon.classList.add('delete-tag');
+        img.classList.add('delete-tag-icon');
+        img.setAttribute('src', './public/assets/icons/close-icon.png')
+    
+        tagList.appendChild(buttonTag);
+        buttonTag.textContent = value
+        buttonTag.appendChild(spanIcon);
+        spanIcon.appendChild(img);
+
+        let newTags = []
+        newTags.push(tags)
+
+        let thisVal = []
+        thisVal.push(value)
+    
+        buttonTag.onclick = function(e){
+            console.log(newTags)
+            console.log(thisVal);
+            e.target.remove()
+
+            const filteredTags = newTags.filter(tag => tag == thisVal)
+            console.log(filteredTags)
+            
+            filteredTags.forEach(tag =>{
+                isSearching = true
+                displayRecipeByTags(tag)     
+            })
+
+            if (filteredTags == 0){
+                displayRecipes(data) 
+                displayIngredients(data);
+                displayAppliances(data);
+                displayUstensiles(data); 
+            }
+
+
+        }
+    }
+
+  
+
 
     function displayRecipeByTags(tag){
         let recipes = [];
@@ -177,13 +207,13 @@ function searchRecipe(data) {
         } else {
             recipes = itemsRecipes;
         }
-        console.log(itemsRecipes)
 
         const foundRecipes = recipes.filter(item => item.name.toLowerCase().includes(tag.toLowerCase()));
         const foundIngredients = recipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
         const foundDescription = recipes.filter(item => item.description.toLowerCase().includes(tag.toLowerCase()));
         const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
         remainingRecipes = results;
+        console.log(results)
 
 
         displayIngredients(results);
@@ -193,6 +223,7 @@ function searchRecipe(data) {
         displayResult(results)
             
     }
+
 
     dropdownToggle.forEach(dropdown => {
         dropdown.onkeyup = function (e){
@@ -276,6 +307,8 @@ function searchRecipe(data) {
         }
     }
 }
+
+
 
 
 

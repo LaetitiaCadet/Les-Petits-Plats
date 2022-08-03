@@ -21,23 +21,11 @@ const ingredientsList = document.querySelector('.ingredient-list');
 const applianceList = document.querySelector('.appliance-list');
 const ustensilsList = document.querySelector('.ustensil-list');
 let recipesList = document.getElementById('bloc-recipe');
-
+const tagList = document.getElementById("tags")
 let isSearching = false; 
 let remainingRecipes = [];
 let tags = []
 
-function deleteTags(){
-    let buttonTag = document.querySelectorAll('.tag-item');
-
-    let deleteTag = document.querySelectorAll('.delete-tag'); 
-
-    for (closeItem of deleteTag){
-        closeItem.onclick = function (e){
-            e.target.style.display = none
-        }
-    }
-}
-deleteTags()
 
 function displayResult(cardRecipes) {
     recipesList.innerHTML = "";
@@ -112,7 +100,7 @@ function searchRecipe(data){
 
 
      function tagItems (items) {
-        const tagList = document.getElementById("tags")
+
         
         items.onclick = function(e) {
             e.preventDefault()
@@ -126,27 +114,15 @@ function searchRecipe(data){
             }
 
             if (items == ingredientsList) {
-                e.target.style.display = 'none'
-                tagList.innerHTML += `<button class="tag-item btn btn-primary m-3">${item}
-                                        <span class="delete-tag">
-                                            <img src="./public/assets/icons/close-icon.png" alt="icon-close">
-                                        </span>
-                                      </button>`
+                displayTag(item)
+                tagList.lastChild.classList.add('btn-primary')
 
             } else if (items == applianceList) {
-                e.target.style.display = 'none'
-                tagList.innerHTML += `<button class="tag-item btn btn-success m-3">${item}
-                                        <span class="delete-tag">
-                                            <img src="./public/assets/icons/close-icon.png" alt="icon-close">
-                                        </span>
-                                      </button>`
+                displayTag(item)
+                tagList.lastChild.classList.add('btn-success')
             } else if (items == ustensilsList) {
-                e.target.style.display = 'none'
-                tagList.innerHTML += `<button class="tag-item btn btn-danger m-3">${item}
-                                        <span class="delete-tag">
-                                        <img src="./public/assets/icons/close-icon.png" alt="icon-close">
-                                        </span>
-                                      </button`
+                displayTag(item)
+                tagList.lastChild.classList.add('btn-danger')
             }     
        
         }
@@ -155,6 +131,59 @@ function searchRecipe(data){
     tagItems(ingredientsList)
     tagItems(applianceList)
     tagItems(ustensilsList)
+
+    function displayTag(value){
+        let buttonTag = document.createElement('button');
+        let spanIcon = document.createElement('span');
+        let img = document.createElement('img');
+        buttonTag.classList.add('tag-item','btn','m-3');
+        spanIcon.classList.add('delete-tag');
+        img.classList.add('delete-tag-icon');
+        img.setAttribute('src', './public/assets/icons/close-icon.png')
+    
+        tagList.appendChild(buttonTag);
+        buttonTag.textContent = value
+        buttonTag.appendChild(spanIcon);
+        spanIcon.appendChild(img);
+
+        let newTags = []
+        newTags.push(tags)
+
+        let thisVal = []
+        thisVal.push(value)
+    
+        buttonTag.onclick = function(e){
+            console.log(newTags)
+            console.log(thisVal);
+            e.target.remove()
+
+
+            for (let itemtag of newTags){
+                console.log(itemtag)
+                const filteredTags = itemtag.includes(thisVal)
+                console.log(filteredTags)
+                if(filteredTags){
+                    for (let item of filteredTags){
+                        console.log(item)
+                        displayRecipeByTags(item)
+                    }
+                }
+            }
+
+            
+
+
+            
+            // filteredTags.forEach(tag =>{
+            //     isSearching = true
+            //     displayRecipeByTags(tag)     
+            // })
+
+
+
+
+        }
+    }
 
     function displayRecipeByTags(tag){
         let recipes = [];

@@ -19,6 +19,7 @@ async function dataRecipe() {
 }
 
 const dropdownToggle = document.querySelectorAll('.dropdown-toggle');
+const arrowExpand = document.querySelectorAll('.expand');
 const searchInput = document.querySelector('.input-search');
 const ingredientsList = document.querySelector('.ingredient-list');
 const applianceList = document.querySelector('.appliance-list');
@@ -27,12 +28,19 @@ let recipesList = document.getElementById('bloc-recipe');
 const tagList = document.getElementById("tags");
 let btnTag = document.querySelectorAll('.tag-item');
 let tags = [];
+let tagSelected = [];
 let thisTag = [];
 
+dropdownToggle.forEach(drop => {
+    drop.addEventListener("click", function(e){
+        let thisDrop = e.target;
+        thisDrop.nextElementSibling.classList.toggle('rotate')
+
+    })
+})
 
 //Affichage de la liste des option d'ingredients
 function displayIngredients(recipes) {
-
     let ingredients = [];
 
     recipes.forEach((recipe) => {
@@ -88,8 +96,6 @@ function displayResult(cardRecipes) {
     }
 }
 
-
-
 // Recherche de recette par search bar principal par tag et par searchbarTag 
 function searchRecipe(data) {
     let itemsRecipes = [];
@@ -112,14 +118,15 @@ function searchRecipe(data) {
     displayAppliances(data);
     displayUstensiles(data);
 
-    let tagItems = function(items) {
+     function tagItems (items) {
 
-        items.onclick = function(e) {
+        items.addEventListener('click',function(e) {
             
             e.preventDefault()
             let item = e.target.textContent
             tags.push(item);
-
+            tagSelected.push(item)
+            e.target.remove()
             e.target.style.display='none'
 
             tags.forEach((tag) => {
@@ -127,9 +134,7 @@ function searchRecipe(data) {
                 isSearching = true
             })
 
-            e.target.style.display = 'none'
-
-            if (items == ingredientsList && item) {
+            if (items == ingredientsList) {
                 displayTag(item)
                 tagList.lastChild.classList.add('btn-primary')
             } else if (items == applianceList) {
@@ -142,7 +147,7 @@ function searchRecipe(data) {
 
 
 
-        }
+        })
 
 
     }
@@ -166,34 +171,43 @@ function searchRecipe(data) {
         buttonTag.appendChild(spanIcon);
         spanIcon.appendChild(img);
 
-        let newTags = []
-        newTags.push(tags)
 
         let thisVal = []
         thisVal.push(value)
     
-        buttonTag.onclick = function(e){
-            console.log(newTags)
-            console.log(thisVal);
+        buttonTag.addEventListener('click', function(e) {
+            console.log(tagSelected)
+            console.log(tags)
+            // console.log(thisVal);
+            console.log(e.target.textContent)
             e.target.remove()
+            // const filteredTags = tagSelected.filter(thistag =>  thistag != e.target.textContent)
 
-            const filteredTags = newTags.filter(tag => tag == thisVal)
-            console.log(filteredTags)
-            
-            filteredTags.forEach(tag =>{
-                isSearching = true
-                displayRecipeByTags(tag)     
-            })
+            if (tagSelected.indexOf(e.target.textContent) > -1){
+                tagSelected.pop(e.target.textContent)
+                console.log(tagSelected)
+                tagSelected.forEach(tag =>{
+                    console.log(tag)
+                    isSearching = true
+                    displayRecipeByTags(tag)     
+                })
+            }
+            console.log(tagSelected)
 
-            if (filteredTags == 0){
-                displayRecipes(data) 
+
+       
+            if (tagSelected.length == 0 ){
+                recipesList.innerHTML = "";
+                tags = [];
+                tagSelected = [];
+                isSearching = false
+                displayRecipes(data)
                 displayIngredients(data);
                 displayAppliances(data);
                 displayUstensiles(data); 
             }
 
-
-        }
+        })
     }
 
   
@@ -201,35 +215,41 @@ function searchRecipe(data) {
 
     function displayRecipeByTags(tag){
         let recipes = [];
-
+        recipes = remainingRecipes;
         if(isSearching) {
             recipes = remainingRecipes;
         } else {
             recipes = itemsRecipes;
         }
 
+        console.log(recipes)
+
         const foundRecipes = recipes.filter(item => item.name.toLowerCase().includes(tag.toLowerCase()));
         const foundIngredients = recipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
         const foundDescription = recipes.filter(item => item.description.toLowerCase().includes(tag.toLowerCase()));
         const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
         remainingRecipes = results;
+
+        console.log(remainingRecipes.length)
         console.log(results)
 
 
-        displayIngredients(results);
-        displayAppliances(results);
-        displayUstensiles(results);
+        displayIngredients(remainingRecipes);
+        displayAppliances(remainingRecipes);
+        displayUstensiles(remainingRecipes);
         
-        displayResult(results)
+        displayResult(remainingRecipes)
             
     }
-
+    
 
     dropdownToggle.forEach(dropdown => {
-        dropdown.onkeyup = function (e){
+        dropdown.addEventListener('keyup', function (e){
             let newIngredientList = [];
             let newApplianceList = [];
             let newUstensilList = [];  
+
+           
             
             data.forEach(thisData => {
                 thisData.ingredients.forEach(ingredient => {
@@ -281,12 +301,13 @@ function searchRecipe(data) {
                      })
                      
                  }
-            } 
-        }
+            }
+        
+        })
     })
 
     // recherche des recettes par nom, ingrédients et description avec la barre principale de la page.
-    searchInput.onkeyup = function() {
+    searchInput.addEventListener("keyup", function() {
         const searchInputValue = searchInput.value;
 
         if (searchInputValue.length < 2) {
@@ -305,7 +326,7 @@ function searchRecipe(data) {
             displayAppliances(results);
             displayUstensiles(results);
         }
-    }
+    })
 }
 
 

@@ -47,13 +47,12 @@
         z-index:3
     }
 
-    .dropdown-toggle.show[aria-expanded="true"] .expand{
+    .rotate{
         -webkit-transform: rotateX(180deg);
         -moz-transform: rotateX(180deg);
         transform: rotateX(180deg);
-
+        top:22px;
     }
-
 
     .dropdown-toggle.show{
         width: 667px;
@@ -91,10 +90,6 @@
     ul.bg-primary{
         height: 300px;
     }
-
-
-
-
 
 
 

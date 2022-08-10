@@ -18,8 +18,8 @@ function recipesFactory (data) {
             <img src="./public/assets/image-recette.jpg" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title placeholder-glow d-flex justify-content-between">
-                    <span class="col-10">${name}</span>
-                    <span class="d-flex align-items-center"><i class="card-icon-time mx-2"></i>${time}</span>
+                    <span class="col-9">${name}</span>
+                    <span class="d-flex align-items-center"><i class="card-icon-time mx-2"></i>${time}min</span>
                 </h5>
                 <div class="d-flex justify-content-between">
                     <ul class="ingredients-list" id="ingredients-list">

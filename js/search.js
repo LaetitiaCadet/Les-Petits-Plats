@@ -248,8 +248,6 @@ function searchRecipe(data) {
             let newIngredientList = [];
             let newApplianceList = [];
             let newUstensilList = [];  
-
-           
             
             data.forEach(thisData => {
                 thisData.ingredients.forEach(ingredient => {
@@ -301,6 +299,12 @@ function searchRecipe(data) {
                      })
                      
                  }
+            }
+
+            if (searchValue.length < 2) {
+                displayIngredients(data);
+                displayAppliances(data);
+                displayUstensiles(data);
             }
         
         })

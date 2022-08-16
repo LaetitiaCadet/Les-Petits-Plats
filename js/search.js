@@ -31,10 +31,16 @@ let tags = [];
 let tagSelected = [];
 let thisTag = [];
 
+
 dropdownToggle.forEach(drop => {
     drop.addEventListener("click", function(e){
         let thisDrop = e.target;
         thisDrop.nextElementSibling.classList.toggle('rotate')
+
+    })
+    drop.addEventListener("blur", function(e){
+        let thisDrop = e.target;
+        thisDrop.nextElementSibling.classList.remove('rotate')
 
     })
 })
@@ -56,6 +62,7 @@ function displayIngredients(recipes) {
     })
 }
 //Affichage de la liste des option des appareils
+
 function displayAppliances(recipes) {
     let searchbarTag = document.createElement('input');
     searchbarTag.setAttribute('type','text');
@@ -70,6 +77,7 @@ function displayAppliances(recipes) {
         applianceList.innerHTML += `<li class="bg-success"><a class="dropdown-item" href="#">${appliance}</a></li>`
     })
 }
+
 //Affichage de la liste des option des ustensils
 function displayUstensiles(recipes) {
     let ustensiles = [];
@@ -103,9 +111,10 @@ function searchRecipe(data) {
     let itemsAppliance = [];
     let itemsUstensils = [];
     
-    let isSearching = false; 
+    let isSearching = false;
+    let doubleTag = false;  
     let remainingRecipes = [];
-    let remainingRecipesByTags = [];
+
 
     for (const items of data) {
         itemsRecipes.push(items);
@@ -120,32 +129,38 @@ function searchRecipe(data) {
 
      function tagItems (items) {
 
-        items.addEventListener('click',function(e) {
+        items.addEventListener('click', function(e) {
             
             e.preventDefault()
             let item = e.target.textContent
             tags.push(item);
             tagSelected.push(item)
-            e.target.remove()
-            e.target.style.display='none'
+            
+            tags.forEach((tag) => {
+                doubleTag = tag === item
+                console.log(doubleTag)
+            })
 
             tags.forEach((tag) => {
+                console.log(tag)
                 displayRecipeByTags(tag)
                 isSearching = true
             })
 
-            if (items == ingredientsList) {
-                displayTag(item)
-                tagList.lastChild.classList.add('btn-primary')
-            } else if (items == applianceList) {
-                displayTag(item)
-                tagList.lastChild.classList.add('btn-success')
-            } else if (items == ustensilsList) {
-                displayTag(item)
-                tagList.lastChild.classList.add('btn-danger')
-            }
 
+                console.log(item)
+                if (items == ingredientsList) {
+                    console.log(doubleTag)
+                    displayTag(item)
+                    tagList.lastChild.classList.add('btn-primary')
 
+                } else if (items == applianceList) {
+                    displayTag(item)
+                    tagList.lastChild.classList.add('btn-success')
+                } else if (items == ustensilsList) {
+                    displayTag(item)
+                    tagList.lastChild.classList.add('btn-danger')
+                }
 
         })
 
@@ -167,14 +182,11 @@ function searchRecipe(data) {
         img.setAttribute('src', './public/assets/icons/close-icon.png')
     
         tagList.appendChild(buttonTag);
-        buttonTag.textContent = value
+        buttonTag.textContent = value;
         buttonTag.appendChild(spanIcon);
         spanIcon.appendChild(img);
 
-
-        let thisVal = []
-        thisVal.push(value)
-    
+        console.log(tagList)
         buttonTag.addEventListener('click', function(e) {
             console.log(tagSelected)
             console.log(tags)
@@ -210,9 +222,6 @@ function searchRecipe(data) {
         })
     }
 
-  
-
-
     function displayRecipeByTags(tag){
         let recipes = [];
         recipes = remainingRecipes;
@@ -222,15 +231,12 @@ function searchRecipe(data) {
             recipes = itemsRecipes;
         }
 
-        console.log(recipes)
 
         const foundRecipes = recipes.filter(item => item.name.toLowerCase().includes(tag.toLowerCase()));
         const foundIngredients = recipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
         const foundDescription = recipes.filter(item => item.description.toLowerCase().includes(tag.toLowerCase()));
         const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
         remainingRecipes = results;
-
-        console.log(remainingRecipes.length)
         console.log(results)
 
 
@@ -254,19 +260,14 @@ function searchRecipe(data) {
                     newIngredientList.push(ingredient.ingredient.toLowerCase())
                 })
                 thisData.ustensils.forEach(ustensil => newUstensilList.push(ustensil.toLowerCase()))
-                newApplianceList.push(thisData.appliance.toLowerCase())
-               
+                newApplianceList.push(thisData.appliance.toLowerCase())           
             })
 
             const ingredientsListToFilter = Array.from(new Set (newIngredientList))
-            console.log(ingredientsListToFilter)
 
             const applianceListToFilter = Array.from(new Set (newApplianceList))
-            console.log(applianceListToFilter)
 
             const ustensilsListToFilter = Array.from(new Set (newApplianceList))
-            console.log(applianceListToFilter)
-
 
             const searchValue = e.target.value
 
@@ -274,8 +275,13 @@ function searchRecipe(data) {
             const foundApplianceList = applianceListToFilter.filter(item => item.includes(searchValue.toLowerCase()))
             const foundUstensilList = ustensilsListToFilter.filter(item => item.includes(searchValue.toLowerCase()))
 
+            if (searchValue == "") {
+                displayIngredients(data);
+                displayAppliances(data);
+                displayUstensiles(data);
+            }
 
-            if (searchValue.length >= 2) {
+            if (searchValue.length > 2) {
                 if(e.target.classList.contains('btn-primary')){
                     ingredientsList.innerHTML = ""
                     foundIngredientsList.forEach(item => {
@@ -300,12 +306,6 @@ function searchRecipe(data) {
                      
                  }
             }
-
-            if (searchValue.length < 2) {
-                displayIngredients(data);
-                displayAppliances(data);
-                displayUstensiles(data);
-            }
         
         })
     })
@@ -315,14 +315,15 @@ function searchRecipe(data) {
         const searchInputValue = searchInput.value;
 
         if (searchInputValue.length < 2) {
-            return
+            recipesList.innerHTML = "";
+            displayRecipes(data)
         }
         const foundRecipes = data.filter(item => item.name.toLowerCase().includes(searchInputValue.toLowerCase()));
         const foundIngredients = data.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(searchInputValue.toLowerCase())));
         const foundDescription = data.filter(item => item.description.toLowerCase().includes(searchInputValue.toLowerCase()));
         const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
 
-        if (searchInputValue.length >= 2) {
+        if (searchInputValue.length > 2) {
             recipesList.innerHTML = "";
 
             displayResult(results)

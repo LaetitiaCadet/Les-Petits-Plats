@@ -59,6 +59,7 @@ function displayIngredients(recipes) {
     for(item of filteredIngredients){
         ingredientsList.innerHTML += `<li class="col-4 bg-primary"><a class="dropdown-item" href="#">${item}</a></li> `
     }
+
 }
 
 function displayAppliances(recipes) {
@@ -107,6 +108,7 @@ function displayResult(cardRecipes) {
 
 function searchRecipe(data){
     let itemsRecipes = [];
+    let result = [];
      // j'affiche les resultat des filtre dans le dropdown des ingredients
     displayIngredients(data);
     displayAppliances(data);
@@ -125,12 +127,14 @@ function searchRecipe(data){
             tags.push(item);
             console.log(tags)
             tagSelected.push(item);
+            console.log(e.target)
+
+           
            
             for (tag of tags){
                 displayRecipeByTags(tag)
                 isSearching = true
                 console.log(tag)
-
             }
 
             if (items == ingredientsList) {
@@ -143,7 +147,8 @@ function searchRecipe(data){
             } else if (items == ustensilsList) {
                 displayTag(item)
                 tagList.lastChild.classList.add('btn-danger')
-            }     
+            }
+            
        
         })
         
@@ -165,6 +170,7 @@ function searchRecipe(data){
         buttonTag.textContent = value
         buttonTag.appendChild(spanIcon);
         spanIcon.appendChild(img);
+        
     
         buttonTag.addEventListener('click' , function(e){
             console.log(e.target.textContent);
@@ -217,7 +223,6 @@ function searchRecipe(data){
     }
 
 
-    let result = []
     //recherche des recettes par barre input principale 
     searchInput.onkeyup = function () {
          const searchInputValue = searchInput.value;
@@ -278,19 +283,27 @@ function searchRecipe(data){
 
                 for(ustensil of items.ustensils){
                     newUstensilList.push(ustensil.toLowerCase())
+                    console.log(ustensil)
                 }    
             }
 
             const foundIngredients = Array.from(new Set (newIngredientList));
             const foundAppliances = Array.from(new Set (newApplianceList));
             const foundUstensils = Array.from(new Set (newUstensilList));
+            console.log(foundUstensils)
 
             let resultUstensil = [];
             let resultIngredient = [];
             let resultAppliance = []; 
+
+            if (searchValue == "") {
+                displayIngredients(data);
+                displayAppliances(data);
+                displayUstensils(data);
+            }
             
 
-            if (searchValue.length >= 2) {
+            if (searchValue.length > 2) {
 
                 for(item of foundIngredients){
                     let filter = item.includes(searchValue.toLowerCase()) 
@@ -314,9 +327,11 @@ function searchRecipe(data){
                     } 
                 }
 
+
                 if(e.target.classList.contains('btn-danger')){
                     ustensilsList.innerHTML = ""               
                     for (items of resultUstensil){
+                        console.log(items)
                     ustensilsList.innerHTML += `<li class="col-4 bg-danger"><a class="dropdown-item" href="#">${items}</a></li> ` 
                     }
                 }

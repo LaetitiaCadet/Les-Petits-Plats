@@ -80,6 +80,13 @@
         .dropdown-item:hover{
             color:black !important;   
         }
+
+
+    }
+    .item-disabled{
+        color:gray;
+        text-decoration: overline;
+        font-weight: 600;
     }
 }
 

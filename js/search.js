@@ -3,7 +3,7 @@
 async function getRecipes() {
     try {
         // const response = await fetch("../data/recipes.json");
-        const response = await fetch ('data/recipes.json')
+        const response = await fetch('data/recipes.json')
         const recipes = await response.json();
 
         return recipes;
@@ -31,12 +31,12 @@ let tagSelected = [];
 
 
 dropdownToggle.forEach(drop => {
-    drop.addEventListener("click", function(e){
+    drop.addEventListener("click", function (e) {
         let thisDrop = e.target;
         thisDrop.nextElementSibling.classList.toggle('rotate')
 
     })
-    drop.addEventListener("blur", function(e){
+    drop.addEventListener("blur", function (e) {
         let thisDrop = e.target;
         thisDrop.nextElementSibling.classList.remove('rotate')
 
@@ -59,13 +59,11 @@ function displayIngredients(recipes) {
         ingredientsList.innerHTML += `<li class="col-4 bg-primary"><a class="dropdown-item" href="#">${item}</a></li> `
     })
 }
-//Affichage de la liste des option des appareils
 
+//Affichage de la liste des option des appareils
 function displayAppliances(recipes) {
-    let searchbarTag = document.createElement('input');
-    searchbarTag.setAttribute('type','text');
-    searchbarTag.classList.add('show');
     let appliances = [];
+
     recipes.forEach(recipe => appliances.push(recipe.appliance.toLowerCase()));
     const filteredAppliance = Array.from(new Set(appliances));
 
@@ -95,9 +93,9 @@ function displayResult(cardRecipes) {
     cardRecipes.forEach(item => {
         const recipesModel = recipesFactory(item)
         const recipesDOM = recipesModel.showRecipes(item)
-        recipesList.innerHTML += recipesDOM              
+        recipesList.innerHTML += recipesDOM
     })
-    if (cardRecipes.innerHTML == "") {
+    if (recipesList.innerHTML == "") {
         recipesList.innerHTML = `<p class="no-found">Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson »</p>`
     }
 }
@@ -108,28 +106,25 @@ function searchRecipe(data) {
     let itemsIngredients = [];
     let itemsAppliance = [];
     let itemsUstensils = [];
-    
-    let isSearching = false; 
+
+    let isSearching = false;
     let remainingRecipes = [];
     let newArrayRecipes = [];
-    let lastRecipes ;
 
 
     for (const items of data) {
         itemsRecipes.push(items);
-        itemsIngredients.push(items.ingredients)
-        itemsAppliance.push(items.appliance)
-        itemsUstensils.push(items.ustensils)
     }
 
     displayIngredients(data);
     displayAppliances(data);
     displayUstensiles(data);
 
-     function reloadRecipesListByTag(value){
-        // newArrayRecipes = []
+    function reloadRecipesListByTag(value) {
+        newArrayRecipes = []
         recipesList.innerHTML = ""
         itemsRecipes = data
+
         displayResult(value);
         displayIngredients(value);
         displayAppliances(value);
@@ -137,91 +132,71 @@ function searchRecipe(data) {
 
     }
 
-    function displayRecipeByTags(tag){
+    function displayRecipeByTags(tag, categorie) {
         let recipes = [];
+        let results;
+        console.log(categorie)
 
-        if(isSearching) {
+        if (isSearching) {
             recipes = remainingRecipes;
             newArrayRecipes.push(...recipes);
         } else {
             recipes = itemsRecipes;
         }
 
-        console.log(recipes)
-        console.log(newArrayRecipes)
-   
-
-        const foundRecipes = recipes.filter(item => item.name.toLowerCase().includes(tag.toLowerCase()));
-        const foundIngredients = recipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
-        const foundDescription = recipes.filter(item => item.description.toLowerCase().includes(tag.toLowerCase()));
-        const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
-        remainingRecipes = results;
-
-
-        displayIngredients(results);
-        displayAppliances(results);
-        displayUstensiles(results);
-        
-        displayResult(results)
-
-        if (tagSelected.length  === 0) {
-            reloadRecipesListByTag(data)
-            isSearching = false
-            console.log(isSearching)
+        switch (categorie) {
+            case "ingredient":
+                const foundIngredients = recipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
+                results = [...new Set([...foundIngredients])]
+                remainingRecipes = results
+                break;
+            case "appliance":
+                const foundAppliance =  recipes.filter(item => item.appliance.toLowerCase().includes(tag.toLowerCase()));
+                results = [...new Set([...foundAppliance])]
+                break;
+            case "ustensils":
+                const foundUstensil = recipes.filter(item => item.ustensils.forEach(ustensil => ustensil.toLowerCase().includes(tag.toLowerCase())))
+                results = [...new Set([...foundUstensil])]
+                break;
+            default:
+                break;
         }
+
+        remainingRecipes = results;
+        console.log(remainingRecipes)
+
+
+        displayIngredients(remainingRecipes);
+        displayAppliances(remainingRecipes);
+        displayUstensiles(remainingRecipes);
+
+        displayResult(remainingRecipes)
+
     }
 
-    // function displayRecipeByTags(tag){ 
-    //     reci
-    //     console.log(itemsRecipes)
-    //     newArrayRecipes = itemsRecipes
-    //     if(isSearching) {
-    //         itemsRecipes = remainingRecipes;
-    //         console.log(remainingRecipes)
-            
-    //     } else if (tagSelected.length  === 0) {
-    //             reloadRecipesListByTag(data)
-    //             remainingRecipes = []
-    //     }
-    //     newArrayRecipes = itemsRecipes
 
-    //     const foundRecipes = itemsRecipes.filter(item => item.name.toLowerCase().includes(tag.toLowerCase()));
+    function tagItems(items) {
 
-    //     const foundIngredients = itemsRecipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
-    //     const foundDescription = itemsRecipes.filter(item => item.description.toLowerCase().includes(tag.toLowerCase()));
-    //     const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
-    //     remainingRecipes = results;          
+        items.addEventListener('click', function (e) {
 
-    //     // console.log(remainingRecipes)
-
-    //     displayIngredients(remainingRecipes);
-    //     displayAppliances(remainingRecipes);
-    //     displayUstensiles(remainingRecipes);
-    //     displayResult(remainingRecipes)
-    // }
-
-    function tagItems (items) {
-
-        items.addEventListener('click', function(e) {
-            
             e.preventDefault()
             let item = e.target.textContent
-            // tags.push(item);
             tagSelected.push(item)
 
-            displayRecipeByTags(item)
+            if (items == ingredientsList) {
+                displayRecipeByTags(item, "ingredient")
+                displayTag(item)
+                tagList.lastChild.classList.add('btn-primary')
+            } else if (items == applianceList) {
+                displayRecipeByTags(item, "appliance")
+                displayTag(item)
+                tagList.lastChild.classList.add('btn-success')
+            } else if (items == ustensilsList) {
+                displayRecipeByTags(item, "ustensils")
+                displayTag(item)
+                tagList.lastChild.classList.add('btn-danger')
+            }
             isSearching = true
-            
-                if (items == ingredientsList) {
-                    displayTag(item)
-                    tagList.lastChild.classList.add('btn-primary')
-                } else if (items == applianceList) {
-                    displayTag(item)
-                    tagList.lastChild.classList.add('btn-success')
-                } else if (items == ustensilsList) {
-                    displayTag(item)
-                    tagList.lastChild.classList.add('btn-danger')
-                }
 
         })
 
@@ -232,77 +207,78 @@ function searchRecipe(data) {
     tagItems(applianceList)
     tagItems(ustensilsList)
 
-    function displayTag(value){
+    function displayTag(value) {
         let buttonTag = document.createElement('button');
         let spanIcon = document.createElement('span');
         let img = document.createElement('img');
-        buttonTag.classList.add('tag-item','btn','m-3');
+        buttonTag.classList.add('tag-item', 'btn', 'm-3');
         spanIcon.classList.add('delete-tag');
         img.classList.add('delete-tag-icon');
         img.setAttribute('src', './public/assets/icons/close-icon.png')
-    
+
         tagList.appendChild(buttonTag);
         buttonTag.textContent = value;
         buttonTag.appendChild(spanIcon);
         spanIcon.appendChild(img);
 
-        buttonTag.addEventListener('click', function(e) {
+        buttonTag.addEventListener('click', function (e) {
             e.target.remove()
-            tagSelected = tagSelected.filter(thistag =>  thistag != e.target.textContent)
-            let arrayData = data; 
+            tagSelected = tagSelected.filter(thistag => thistag != e.target.textContent)
+            let arrayData = data;
             let tagValue
 
-            tagSelected.forEach(tag => tagValue = tag) 
+            tagSelected.forEach(tag => tagValue = tag)
             console.log(tagValue)
             UpdateRecipesByTags(tagValue, arrayData)
-
-            if (tagValue == "" ){
-                reloadRecipesListByTag(data)
-            } 
 
         })
     }
 
-    function UpdateRecipesByTags(value, recipes){  
-        const newRecipes = [...new Set (newArrayRecipes)] 
+    function UpdateRecipesByTags(value, recipes) {
+        const newRecipes = [...new Set(newArrayRecipes)]
         console.log(newRecipes)
         recipes = newRecipes;
         console.log(recipes)
-        if (value){
+        if (value) {
             const foundRecipes = recipes.filter(item => item.name.toLowerCase().includes(value.toLowerCase()));
             const foundIngredients = recipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(value.toLowerCase())));
             const foundDescription = recipes.filter(item => item.description.toLowerCase().includes(value.toLowerCase()));
-    
-            const results = [...new Set([ ...foundIngredients, ...foundDescription, ...foundRecipes])]
-    
+
+            const results = [...new Set([...foundIngredients, ...foundDescription, ...foundRecipes])]
+
             displayResult(results)
-        }else{
+
+        } else {
+            results = []
+            remainingRecipes = []
+            remainingRecipes = itemsRecipes
+            isSearching = false
             reloadRecipesListByTag(data)
         }
 
 
     }
-    
+
 
     dropdownToggle.forEach(dropdown => {
-        dropdown.addEventListener('keyup', function (e){
+        dropdown.addEventListener('keyup', function (e) {
             let newIngredientList = [];
             let newApplianceList = [];
-            let newUstensilList = [];  
-            
+            let newUstensilList = [];
+
             data.forEach(thisData => {
                 thisData.ingredients.forEach(ingredient => {
                     newIngredientList.push(ingredient.ingredient.toLowerCase())
                 })
                 thisData.ustensils.forEach(ustensil => newUstensilList.push(ustensil.toLowerCase()))
-                newApplianceList.push(thisData.appliance.toLowerCase())           
+                newApplianceList.push(thisData.appliance.toLowerCase())
             })
 
-            const ingredientsListToFilter = Array.from(new Set (newIngredientList))
+            const ingredientsListToFilter = Array.from(new Set(newIngredientList))
 
-            const applianceListToFilter = Array.from(new Set (newApplianceList))
+            const applianceListToFilter = Array.from(new Set(newApplianceList))
 
-            const ustensilsListToFilter = Array.from(new Set (newApplianceList))
+            const ustensilsListToFilter = Array.from(new Set(newApplianceList))
 
             const searchValue = e.target.value
 
@@ -315,38 +291,38 @@ function searchRecipe(data) {
                 displayAppliances(data);
                 displayUstensiles(data);
             }
-
+ 
             if (searchValue.length > 2) {
-                if(e.target.classList.contains('btn-primary')){
+                if (e.target.classList.contains('btn-primary')) {
                     ingredientsList.innerHTML = ""
                     foundIngredientsList.forEach(item => {
                         ingredientsList.innerHTML += `<li class="col-4 bg-primary"><a class="dropdown-item" href="#">${item}</a></li> `
                     })
-                    
-                }
-                
-                if(e.target.classList.contains('btn-success')){
-                   applianceList.innerHTML = ""
-                    foundApplianceList.forEach(item => {
-                       applianceList.innerHTML += `<li class="col-4 bg-success"><a class="dropdown-item" href="#">${item}</a></li> `
-                    })
-                    
+
                 }
 
-                if(e.target.classList.contains('btn-danger')){
+                if (e.target.classList.contains('btn-success')) {
+                    applianceList.innerHTML = ""
+                    foundApplianceList.forEach(item => {
+                        applianceList.innerHTML += `<li class="col-4 bg-success"><a class="dropdown-item" href="#">${item}</a></li> `
+                    })
+
+                }
+
+                if (e.target.classList.contains('btn-danger')) {
                     ustensilsList.innerHTML = ""
-                     foundUstensilList.forEach(item => {
+                    foundUstensilList.forEach(item => {
                         ustensilsList.innerHTML += `<li class="col-4 bg-danger"><a class="dropdown-item" href="#">${item}</a></li> `
-                     })
-                     
-                 }
+                    })
+
+                }
             }
-        
+
         })
     })
 
     // recherche des recettes par nom, ingrédients et description avec la barre principale de la page.
-    searchInput.addEventListener("keyup", function() {
+    searchInput.addEventListener("keyup", function () {
         const searchInputValue = searchInput.value;
 
         if (searchInputValue.length < 2) {
@@ -368,9 +344,6 @@ function searchRecipe(data) {
         }
     })
 }
-
-
-
 
 
 async function displayRecipes(recipes) {

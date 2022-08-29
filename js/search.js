@@ -97,7 +97,7 @@ function displayResult(cardRecipes) {
         const recipesDOM = recipesModel.showRecipes(item)
         recipesList.innerHTML += recipesDOM              
     })
-    if (recipesList.innerHTML == "") {
+    if (cardRecipes.innerHTML == "") {
         recipesList.innerHTML = `<p class="no-found">Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson »</p>`
     }
 }
@@ -112,6 +112,7 @@ function searchRecipe(data) {
     let isSearching = false; 
     let remainingRecipes = [];
     let newArrayRecipes = [];
+    let lastRecipes ;
 
 
     for (const items of data) {
@@ -133,34 +134,71 @@ function searchRecipe(data) {
         displayIngredients(value);
         displayAppliances(value);
         displayUstensiles(value);
+
     }
 
-    function displayRecipeByTags(tag){ 
-        console.log(itemsRecipes)
+    function displayRecipeByTags(tag){
+        let recipes = [];
+
         if(isSearching) {
-            itemsRecipes = remainingRecipes;
-            console.log(remainingRecipes)
-            
-        } else if (tagSelected.length  === 0) {
-                reloadRecipesListByTag(data)
-                remainingRecipes = []
+            recipes = remainingRecipes;
+            newArrayRecipes.push(...recipes);
+        } else {
+            recipes = itemsRecipes;
         }
-        newArrayRecipes = itemsRecipes
 
-        const foundRecipes = itemsRecipes.filter(item => item.name.toLowerCase().includes(tag.toLowerCase()));
+        console.log(recipes)
+        console.log(newArrayRecipes)
+   
 
-        const foundIngredients = itemsRecipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
-        const foundDescription = itemsRecipes.filter(item => item.description.toLowerCase().includes(tag.toLowerCase()));
+        const foundRecipes = recipes.filter(item => item.name.toLowerCase().includes(tag.toLowerCase()));
+        const foundIngredients = recipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
+        const foundDescription = recipes.filter(item => item.description.toLowerCase().includes(tag.toLowerCase()));
         const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
-        remainingRecipes = results;          
+        remainingRecipes = results;
 
-        // console.log(remainingRecipes)
 
-        displayIngredients(remainingRecipes);
-        displayAppliances(remainingRecipes);
-        displayUstensiles(remainingRecipes);
-        displayResult(remainingRecipes)
+        displayIngredients(results);
+        displayAppliances(results);
+        displayUstensiles(results);
+        
+        displayResult(results)
+
+        if (tagSelected.length  === 0) {
+            reloadRecipesListByTag(data)
+            isSearching = false
+            console.log(isSearching)
+        }
     }
+
+    // function displayRecipeByTags(tag){ 
+    //     reci
+    //     console.log(itemsRecipes)
+    //     newArrayRecipes = itemsRecipes
+    //     if(isSearching) {
+    //         itemsRecipes = remainingRecipes;
+    //         console.log(remainingRecipes)
+            
+    //     } else if (tagSelected.length  === 0) {
+    //             reloadRecipesListByTag(data)
+    //             remainingRecipes = []
+    //     }
+    //     newArrayRecipes = itemsRecipes
+
+    //     const foundRecipes = itemsRecipes.filter(item => item.name.toLowerCase().includes(tag.toLowerCase()));
+
+    //     const foundIngredients = itemsRecipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
+    //     const foundDescription = itemsRecipes.filter(item => item.description.toLowerCase().includes(tag.toLowerCase()));
+    //     const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
+    //     remainingRecipes = results;          
+
+    //     // console.log(remainingRecipes)
+
+    //     displayIngredients(remainingRecipes);
+    //     displayAppliances(remainingRecipes);
+    //     displayUstensiles(remainingRecipes);
+    //     displayResult(remainingRecipes)
+    // }
 
     function tagItems (items) {
 
@@ -169,12 +207,11 @@ function searchRecipe(data) {
             e.preventDefault()
             let item = e.target.textContent
             // tags.push(item);
+            tagSelected.push(item)
 
             displayRecipeByTags(item)
             isSearching = true
-            tagSelected.push(item)
             
-
                 if (items == ingredientsList) {
                     displayTag(item)
                     tagList.lastChild.classList.add('btn-primary')
@@ -212,48 +249,36 @@ function searchRecipe(data) {
         buttonTag.addEventListener('click', function(e) {
             e.target.remove()
             tagSelected = tagSelected.filter(thistag =>  thistag != e.target.textContent)
-            console.log('il reste ' + tagSelected.length + ' element')
+            let arrayData = data; 
+            let tagValue
 
-            if (tagSelected.length === 0 ){
-                console.log('vide')
+            tagSelected.forEach(tag => tagValue = tag) 
+            console.log(tagValue)
+            UpdateRecipesByTags(tagValue, arrayData)
+
+            if (tagValue == "" ){
                 reloadRecipesListByTag(data)
-            } else {
-                tagSelected.forEach(tag => {
-                   UpdateRecipesByTags(tag)
-                })  
-            }
+            } 
 
         })
     }
 
-    function UpdateRecipesByTags(value){
-        console.log(newArrayRecipes)
-        const foundRecipes = newArrayRecipes.filter(item => item.name.toLowerCase().includes(value.toLowerCase()));
-        console.log(foundRecipes)
-        const foundIngredients = newArrayRecipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(value.toLowerCase())));
-        const foundDescription = newArrayRecipes.filter(item => item.description.toLowerCase().includes(value.toLowerCase()));
-
-        const results = [...new Set([ ...foundIngredients, ...foundDescription, ...foundRecipes])]
-        remainingRecipes = results
-        displayIngredients(remainingRecipes)
-        displayAppliances(remainingRecipes)
-        displayUstensiles(remainingRecipes)
-
-        displayResult(results)
-        if (tagSelected.length === 0) {
-           reloadRecipesListByTag(data)
+    function UpdateRecipesByTags(value, recipes){  
+        const newRecipes = [...new Set (newArrayRecipes)] 
+        console.log(newRecipes)
+        recipes = newRecipes;
+        console.log(recipes)
+        if (value){
+            const foundRecipes = recipes.filter(item => item.name.toLowerCase().includes(value.toLowerCase()));
+            const foundIngredients = recipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(value.toLowerCase())));
+            const foundDescription = recipes.filter(item => item.description.toLowerCase().includes(value.toLowerCase()));
+    
+            const results = [...new Set([ ...foundIngredients, ...foundDescription, ...foundRecipes])]
+    
+            displayResult(results)
+        }else{
+            reloadRecipesListByTag(data)
         }
-
-        // if(isUpdate) {
-
-        // // console.log(newArrayRecipes)
-        
-
-        // // console.log(remainingRecipes)
-
-        // // const foundRecipes = data.filter(item => item.name.toLowerCase().includes(tag.toLowerCase()));
-        // // console.log(foundRecipes)
-
 
 
     }

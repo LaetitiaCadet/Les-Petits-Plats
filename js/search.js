@@ -134,8 +134,10 @@ function searchRecipe(data) {
 
     function displayRecipeByTags(tag, categorie) {
         let recipes = [];
+        let arrayUstensil = [];
         let results;
         console.log(categorie)
+        console.log(tag)
 
         if (isSearching) {
             recipes = remainingRecipes;
@@ -148,17 +150,16 @@ function searchRecipe(data) {
             case "ingredient":
                 const foundIngredients = recipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(tag.toLowerCase())));
                 results = [...new Set([...foundIngredients])]
-                remainingRecipes = results
                 break;
             case "appliance":
                 const foundAppliance =  recipes.filter(item => item.appliance.toLowerCase().includes(tag.toLowerCase()));
-                results = [...new Set([...foundAppliance])]
+                results = [...new Set([...foundAppliance])] 
                 break;
             case "ustensils":
-                const foundUstensil = recipes.filter(item => item.ustensils.forEach(ustensil => ustensil.toLowerCase().includes(tag.toLowerCase())))
+                const foundUstensil = recipes.filter(item => item.ustensils.find(ustensil => ustensil.toLowerCase().includes(tag.toLowerCase())))  
                 results = [...new Set([...foundUstensil])]
                 break;
-            default:
+            default: 
                 break;
         }
 

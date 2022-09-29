@@ -18,15 +18,22 @@ const ustensilsList = document.querySelector('.ustensil-list');
 const tagList = document.getElementById('tags');
 let recipesList = document.getElementById('bloc-recipe');
 
-
-let btnTag = document.querySelectorAll('.tag-item');
 let itemsRecipes = [];
-
-
-let isSearching = false;
 let remainingRecipes = [];
-let newArrayRecipes = [];
 let tagSelected = [];
+
+function reloadRemainingRecipes(){
+    remainingRecipes = itemsRecipes
+}
+
+function loadSearchData (dataRecipes){
+    displayOption(dataRecipes, "ingredient");
+    displayOption(dataRecipes, "appliance");
+    displayOption(dataRecipes, "ustensils");
+
+    dataRecipes.forEach(recipes => itemsRecipes.push(recipes))
+    remainingRecipes = itemsRecipes
+}
 
 //Componnent d'affichage des resultats des recettes 
 function displayRecipes(cardRecipes) {
@@ -108,19 +115,18 @@ function createTag(value) {
     buttonTag.appendChild(spanIcon);
     spanIcon.appendChild(img);
 
-    closeTag()
+     deleteTag()
 }
 
 //Fonction de suppression d'un tag au clic dessus 
-function closeTag() {
+function deleteTag() {
     let buttonTag = document.querySelectorAll('.tag-item')
     buttonTag.forEach(button => {
         button.addEventListener('click', function (e) {
             e.target.remove()
-            remainingRecipes = itemsRecipes
+            reloadRemainingRecipes()
             tagSelected = tagSelected.filter(thistag => thistag != e.target.textContent)
             tagSelected.forEach(tag => {
-                console.log(tag)
                 UpdateRecipes(tag)
             })
             UpdateRecipes(globalSearchInput.value)
@@ -133,13 +139,11 @@ function closeTag() {
 //Mise à jour de la liste des recettes si il n'y a plus de valeur disponible 
 function reloadRecipesList(){
     if(tagList.children.length == 0 && globalSearchInput.value == ""){
-        console.log("reload")
         recipesList.innerHTML = ""
-        remainingRecipes = itemsRecipes
+        reloadRemainingRecipes()
     }
     displayRecipes(remainingRecipes);
 }
-
 
 // mise à jour de la liste des recettes après avoir supprimer un tag 
 function UpdateRecipes(value) {
@@ -154,37 +158,23 @@ function UpdateRecipes(value) {
     remainingRecipes = results
 }
 
-
-function loadSearchData (dataRecipes){
-
-    displayOption(dataRecipes, "ingredient");
-    displayOption(dataRecipes, "appliance");
-    displayOption(dataRecipes, "ustensils");
-
-    dataRecipes.forEach(recipes => itemsRecipes.push(recipes))
-    remainingRecipes = itemsRecipes
-}
-
 // recherche des recettes par nom, ingrédients et description avec la barre principale de la page.
 globalSearchInput.addEventListener('keyup', function (e){
-    let value = e.target.value
-    let recipes = []
-    recipes = remainingRecipes
+    let value = e.target.value.toLowerCase()
 
-    const foundRecipes = recipes.filter(item => item.name.toLowerCase().includes(value.toLowerCase()));
-    const foundIngredients = recipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(value.toLowerCase())));
-    const foundDescription = recipes.filter(item => item.description.toLowerCase().includes(value.toLowerCase()));
 
+    const foundRecipes = remainingRecipes.filter(item => item.name.toLowerCase().includes(value));
+    const foundIngredients = remainingRecipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(value)));
+    const foundDescription = remainingRecipes.filter(item => item.description.toLowerCase().includes(value));
+ 
     const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
 
     remainingRecipes = results
-
-
     if(value.length >= 3 ){
         recipesList.innerHTML = "";
         displayRecipes(remainingRecipes)
     } else {
-        remainingRecipes = itemsRecipes
+        reloadRemainingRecipes()
         tagSelected.forEach(tag => {
             console.log(tag)
             UpdateRecipes(tag)

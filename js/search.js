@@ -36,7 +36,7 @@ const setDataSearch = (data) => {
     for (const items of data){
         itemsRecipes.push(items)
     }
-    remainingRecipes = itemsRecipes
+    reloadRemainingRecipes()
 }
 
 //Affichage de la liste des options par ingredients, appareils et ustensils.
@@ -104,7 +104,7 @@ const reloadRecipesList = () => {
     if(tagList.children.length == 0 && searchInput.value == ""){
         console.log("reload")
         recipesList.innerHTML = ""
-        remainingRecipes = itemsRecipes
+        reloadRemainingRecipes()
     }
     displayRecipes(remainingRecipes);
 }
@@ -161,7 +161,7 @@ const deleteTag = () => {
     }
     button.addEventListener('click', (e) =>{
         e.target.remove()
-        remainingRecipes = itemsRecipes
+        reloadRemainingRecipes()
         tagSelected = tagSelected.filter(item => item != e.target.textContent);
 
         for( let tag of tagSelected){
@@ -281,7 +281,7 @@ searchInput.addEventListener("keyup", (e) => {
         displayRecipes(remainingRecipes)
 
     } else {
-        remainingRecipes = itemsRecipes
+        reloadRemainingRecipes()
         for( let tag of tagSelected){
             updateRecipes(tag)
         }
@@ -310,7 +310,7 @@ for (dropdownInput of dropdownToggle){
         let newUstensilList = [];
         const value = e.target.value;
 
-        for(items of data ){
+        for(items of remainingRecipes ){
             newApplianceList.push(items.appliance.toLowerCase());
 
             for(ingredient of items.ingredients){
@@ -388,6 +388,11 @@ for (dropdownInput of dropdownToggle){
         }
 
     })
+}
+
+//remise à jour de
+const reloadRemainingRecipes = () => {
+    remainingRecipes = itemsRecipes
 }
 
 

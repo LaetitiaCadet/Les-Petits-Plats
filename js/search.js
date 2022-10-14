@@ -102,7 +102,6 @@ const displayRecipes = (cardRecipes) => {
 //Mise à jour de la liste des recettes si il n'y a plus de valeur disponible.
 const reloadRecipesList = () => {  
     if(tagList.children.length == 0 && searchInput.value == ""){
-        console.log("reload")
         recipesList.innerHTML = ""
         reloadRemainingRecipes()
     }
